@@ -17,9 +17,9 @@ interface Props {
   noSticky?: boolean;
   noindex?: boolean;
 }
-const { title, description = 'Доставка цветов в Самаре 24/7 от 60 минут. Букеты и композиции от флористов Milovini, фото перед доставкой, гарантия свежести 48 часов.', image, noSticky = false, noindex = false } = Astro.props;
+const { title, description = 'Цветочный салон «Цветы без повода» в Курске: сборные и монобукеты, композиции, премиум. Доставка по Курску за 60 минут, открытка и средство по уходу – в подарок.', image, noSticky = false, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-// Показная копия на GitHub Pages закрыта от поиска, чтобы не дублировать живой milovinisamara.ru.
+// Показная копия на GitHub Pages закрыта от поиска, чтобы не дублировать живой tsvetibezpovoda.ru.
 const closed = noindex || import.meta.env.PUBLIC_NOINDEX === '1';
 ---
 <!doctype html>
@@ -34,12 +34,13 @@ const closed = noindex || import.meta.env.PUBLIC_NOINDEX === '1';
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
-    <meta name="theme-color" content="#fecbde" />
+    <meta property="og:image" content={new URL(image ?? u('/img/og.jpg'), Astro.site)} />
+    <meta name="theme-color" content="#434730" />
     <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={u('/favicon.png')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Montserrat:wght@300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <a class="sr-only" href="#main">К содержимому</a>
@@ -51,16 +52,16 @@ const closed = noindex || import.meta.env.PUBLIC_NOINDEX === '1';
     <Sheets client:idle />
     {!noSticky && <StickyOrder client:idle />}
     <div class="cookie" id="cookie" hidden>
-      <p>Используя данный сайт, вы даёте согласие на использование файлов cookie, помогающих нам сделать его удобнее для вас.</p>
+      <p>Сайт использует cookie-файлы. Оставаясь на сайте, вы даёте согласие на обработку персональных данных в порядке, указанном в <a href={u('/privacy')}>Политике обработки персональных данных</a>.</p>
       <button type="button" class="btn btn--mauve btn--sm" id="cookie-ok">Хорошо</button>
     </div>
     <script>
       // Плашка cookie – один раз; появление секций при прокрутке.
       const c = document.getElementById('cookie');
-      try { if (c && !localStorage.getItem('mv_cookie')) c.hidden = false; } catch {}
+      try { if (c && !localStorage.getItem('tbp_cookie')) c.hidden = false; } catch {}
       document.getElementById('cookie-ok')?.addEventListener('click', () => {
         if (c) c.hidden = true;
-        try { localStorage.setItem('mv_cookie', '1'); } catch {}
+        try { localStorage.setItem('tbp_cookie', '1'); } catch {}
       });
       const io = new IntersectionObserver((es) => es.forEach((e) => {
         if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }

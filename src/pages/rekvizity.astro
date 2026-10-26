@@ -1,0 +1,25 @@
+---
+// Реквизиты – как на /rekvizity донора: юридический адрес и телефон там не заполнены.
+import Base from '../layouts/Base.astro';
+import Crumbs from '../components/Crumbs.astro';
+import { SITE } from '../lib/site';
+---
+<Base title={`Реквизиты – ${SITE.name}`} description={`Реквизиты цветочного салона «${SITE.name}»: ${SITE.owner}, ИНН ${SITE.inn}, ОГРНИП ${SITE.ogrnip}.`}>
+  <article class="container rq">
+    <Crumbs items={[{ label: 'Главная', href: '/' }, { label: 'Реквизиты' }]} />
+    <h1 class="h1">Реквизиты</h1>
+    <dl>
+      <dt>Продавец</dt><dd>{SITE.owner}</dd>
+      <dt>ИНН / ОГРНИП</dt><dd>{SITE.inn} / {SITE.ogrnip}</dd>
+      <dt>Адрес студии</dt><dd>{SITE.city}, {SITE.address}</dd>
+      <dt>Телефон</dt><dd><a href={SITE.phoneHref}>{SITE.phone}</a></dd>
+    </dl>
+  </article>
+</Base>
+<style>
+  .rq { max-width: 960px; padding-top: 24px; display: grid; gap: 24px; }
+  dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 12px 32px; font-size: 16px; color: var(--ink); }
+  dt { color: var(--muted); }
+  dd { margin: 0; }
+  @media (max-width: 600px) { dl { grid-template-columns: 1fr; gap: 4px; } dd { margin-bottom: 10px; } }
+</style>

@@ -1,0 +1,42 @@
+---
+// Карта сайта деревом: разделы каталога с товарами + страницы покупателю.
+import Base from '../layouts/Base.astro';
+import Crumbs from '../components/Crumbs.astro';
+import { products } from '../lib/catalog';
+import { CATALOGS, SITE } from '../lib/site';
+import { u } from '../lib/url';
+const live = products.filter((p) => p.price && p.images.length);
+const loose = live.filter((p) => !CATALOGS.some((c) => p.path.startsWith(`/catalog/${c.slug}/`)));
+const pages = [
+  { label: 'Доставка и оплата', href: '/delivery' },
+  { label: 'Контакты', href: '/contacts' },
+  { label: 'Реквизиты', href: '/rekvizity' },
+  { label: 'Политика конфиденциальности', href: '/privacy' },
+];
+---
+<Base title={`Карта сайта – ${SITE.name}`} description={`Все разделы и букеты сайта «${SITE.name}».`}>
+  <article class="container km">
+    <Crumbs items={[{ label: 'Главная', href: '/' }, { label: 'Карта сайта' }]} />
+    <h1 class="h1">Карта сайта</h1>
+    <ul>
+      <li><a href={u('/')}>Главная</a></li>
+      <li><a href={u('/catalog')}>Каталог</a>
+        <ul>
+          {CATALOGS.map((c) => (
+            <li><a href={u(`/catalog/${c.slug}`)}>{c.title}</a>
+              <ul>{live.filter((p) => p.path.startsWith(`/catalog/${c.slug}/`)).map((p) => <li><a href={u(p.path)}>{p.title}</a></li>)}</ul>
+            </li>
+          ))}
+          {loose.map((p) => <li><a href={u(p.path)}>{p.title}</a></li>)}
+        </ul>
+      </li>
+      {pages.map((p) => <li><a href={u(p.href)}>{p.label}</a></li>)}
+    </ul>
+  </article>
+</Base>
+<style>
+  .km { max-width: 960px; padding-top: 24px; display: grid; gap: 24px; }
+  ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink); }
+  li > ul { margin-top: 6px; }
+  a:hover { color: var(--mauve); text-decoration: underline; }
+</style>

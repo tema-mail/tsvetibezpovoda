@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactCard from '../components/ContactCard.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { SITE } from '../lib/site';
+import { products } from '../lib/catalog';
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Florist', name: SITE.name, telephone: '+79065745745',
+  address: { '@type': 'PostalAddress', addressLocality: SITE.city, streetAddress: SITE.address, addressCountry: 'RU' },
+  openingHours: 'Mo-Su 10:00-22:00', url: new URL(import.meta.env.BASE_URL, Astro.site).href,
+};
+---
+<Base title={`Контакты – ${SITE.name}, ${SITE.city}, ${SITE.address}`} description={`${SITE.name}: ${SITE.city}, ${SITE.address}. Телефон ${SITE.phone}, ${SITE.hours.toLowerCase()}. ВКонтакте, Telegram, WhatsApp.`}>
+  <PageHero
+    small
+    crumbs={[{ label: 'Главная', href: '/' }, { label: 'Контакты' }]}
+    title="Контакты"
+    text={`${SITE.city}, ${SITE.address}\n${SITE.hours}\n${SITE.phone}`}
+    image={products[4].images[0]}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+    facts={[SITE.owner, `ИНН ${SITE.inn} / ОГРНИП ${SITE.ogrnip}`]}
+  />
+  <ContactCard />
+  <FinalCta />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</Base>

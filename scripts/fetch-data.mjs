@@ -10,11 +10,12 @@ import sharp from 'sharp';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const DATA = path.join(ROOT, 'src/data');
 const IMG = path.join(ROOT, 'public/img');
-const REF = { Referer: 'https://milovinisamara.ru/' };
-// Общая часть магазина: в ней все 255 товаров и полное дерево разделов.
-const STOREPART = '376951054623';
-const STORE_REC = '3271096101';
-const FEED = '908275516261';
+const REF = { Referer: 'https://tsvetibezpovoda.ru/' };
+// Магазин донора: одна часть со всеми товарами и деревом разделов (каталог на главной tsvetibezpovoda.ru).
+const STOREPART = '416224245422';
+const STORE_REC = '893997547';
+// Разделы-страницы: адрес товара строится от первого подходящего раздела по этому порядку.
+const SECTIONS = JSON.parse(await readFile(path.join(ROOT, 'src/data/sections.json'), 'utf8'));
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -79,6 +80,14 @@ async function pool(items, n, fn) {
 // Длинное тире владелец запретил – в данных сразу короткое.
 const dump = (v) => JSON.stringify(v, null, 1).replace(/\u2014/g, '\u2013');
 
+const TR = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'kh',ц:'ts',ч:'ch',ш:'sh',щ:'shch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' };
+/** ЧПУ из названия: транслит, дефисы, до 90 знаков по слову. */
+export function slugify(t) {
+  let s = t.toLowerCase().split('').map((c) => TR[c] ?? c).join('').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (s.length > 90) s = s.slice(0, 90).replace(/-[^-]*$/, '');
+  return s || 'tovar';
+}
+
 const num = (v) => (v === '' || v == null ? null : Math.round(parseFloat(v)));
 
 async function store() {
@@ -89,11 +98,19 @@ async function store() {
     children: walk(p.subparts || [], String(p.uid)),
   }));
   const parts = walk(d.parts);
+  const used = new Set(SECTIONS.map((x) => '/catalog/' + x.slug));
   const products = d.products.map((p) => {
     const u = new URL(p.url);
+    const ids = JSON.parse(p.partuids || '[]').map(String);
+    const sec = SECTIONS.find((x) => ids.includes(x.part));
+    let path0 = `/catalog/${sec ? sec.slug + '/' : ''}${slugify(p.title.trim())}`;
+    let pth = path0;
+    for (let n = 2; used.has(pth); n++) pth = `${path0}-${n}`;
+    used.add(pth);
     return {
       id: String(p.uid),
-      path: decodeURI(u.pathname).replace(/\/$/, ''),
+      path: pth,
+      old: decodeURI(u.pathname).replace(/\/$/, ''),
       title: p.title.trim(),
       descr: p.descr.trim(),
       text: p.text.trim(),
@@ -101,7 +118,7 @@ async function store() {
       priceOld: num(p.priceold),
       mark: p.mark || '',
       stock: num(p.quantity),
-      parts: JSON.parse(p.partuids || '[]').map(String),
+      parts: ids,
       sort: p.sort,
       src: JSON.parse(p.gallery || '[]').map((g) => g.img),
     };
@@ -115,17 +132,6 @@ async function store() {
   await writeFile(path.join(DATA, 'products.json'), dump(products));
   await writeFile(path.join(DATA, 'parts.json'), dump(parts));
 
-  const f = await getJson(`https://feeds.tildaapi.com/api/getfeed/?feeduid=${FEED}&recid=0&c=${c}&size=50&slice=1&sort%5Bdate%5D=desc&getparts=true`);
-  const posts = [];
-  for (const p of f.posts) {
-    posts.push({
-      id: p.uid, title: p.title, descr: p.descr, date: p.date,
-      path: new URL(p.url).pathname,
-      image: p.image ? await saveImage(p.image, 'post', [600, 1200]) : null,
-    });
-  }
-  await writeFile(path.join(DATA, 'posts.json'), dump(posts));
-  console.log('постов', posts.length);
 }
 
 /** Все ссылки static.tildacdn.com из src/ → public/img/t, карта в src/data/images.json */

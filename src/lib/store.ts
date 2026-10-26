@@ -7,8 +7,8 @@ export interface CartItem {
 }
 export interface FavItem { id: string; title: string; price: number; img: string; path: string; descr?: string }
 
-const CART_KEY = 'mv_cart';
-const FAV_KEY = 'mv_fav';
+const CART_KEY = 'tbp_cart';
+const FAV_KEY = 'tbp_fav';
 const isBrowser = typeof window !== 'undefined';
 
 function load<T>(key: string, fallback: T): T {

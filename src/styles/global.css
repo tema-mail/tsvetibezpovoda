@@ -1,29 +1,31 @@
-/* Milovini Flowers – общая система стилей. Цвета и шрифты сняты с живого сайта на Тильде. */
+/* «Цветы без повода» – общая система стилей. Цвета сняты с tsvetibezpovoda.ru: оливковый #434730, тёмный #283618,
+   кремовый из логотипа. Имена переменных остались от шаблона: --mauve – главный (оливковый), --pink – светлый фон. */
 :root {
-  --pink: #fecbde;
-  --pink-soft: #ffe4ee;
-  --pink-deep: #f8b4cc;
-  --mauve: #9a677a;
-  --mauve-dark: #7f5163;
-  --ink: #373313;
-  --text: #5a5a5a;
-  --muted: #919191;
-  --line: #e7dfe2;
-  --bg-soft: #f6f6f6;
-  --beige: #cdb9a9;
+  --pink: #e9e6d6;
+  --pink-soft: #f4f2e8;
+  --pink-deep: #dcd8c2;
+  --mauve: #434730;
+  --mauve-dark: #283618;
+  --cream: #f3eedc;
+  --ink: #222222;
+  --text: #4d4d45;
+  --muted: #939598;
+  --line: #e2e0d5;
+  --bg-soft: #f6f5ef;
+  --beige: #606c38;
   --white: #fff;
-  --radius-xl: 30px;
-  --radius-l: 20px;
-  --radius-m: 14px;
+  --radius-xl: 6px;
+  --radius-l: 6px;
+  --radius-m: 4px;
   --gutter: 40px;
   --container: 1440px;
-  --head-font: 'Comfortaa', system-ui, sans-serif;
-  --body-font: 'Montserrat', system-ui, sans-serif;
-  --shadow: 0 10px 40px rgba(154, 103, 122, 0.12);
+  --head-font: 'Jost', system-ui, sans-serif;
+  --body-font: 'Manrope', system-ui, sans-serif;
+  --shadow: 0 10px 40px rgba(67, 71, 48, 0.14);
   --ease: cubic-bezier(.2, .7, .2, 1);
-  --header-h: 128px;
+  --header-h: 148px;
 }
-@media (max-width: 1023px) { :root { --gutter: 16px; --header-h: 64px; --radius-xl: 24px; } }
+@media (max-width: 1023px) { :root { --gutter: 16px; --header-h: 64px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -56,15 +58,15 @@ p { margin: 0; }
 .btn {
   --h: 64px;
   display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-  height: var(--h); padding: 0 36px; border-radius: 999px; border: 1px solid transparent;
+  height: var(--h); padding: 0 36px; border-radius: 2px; border: 1px solid transparent;
   font: 600 15px/1 var(--body-font); white-space: nowrap; cursor: pointer;
   transition: background-color .2s, color .2s, border-color .2s, transform .2s var(--ease), box-shadow .2s;
 }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0) scale(.98); }
 .btn svg { flex: none; }
-.btn--pink { --flower: #fff; }
-.btn--mauve { --flower: var(--pink); }
+.btn--pink { --flower: var(--mauve); }
+.btn--mauve { --flower: var(--cream); }
 .btn--white { background: var(--white); color: var(--ink); }
 .btn--white:hover { box-shadow: var(--shadow); }
 .btn--pink { background: var(--pink); color: var(--ink); }
@@ -79,7 +81,7 @@ p { margin: 0; }
 
 .chip {
   display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 18px;
-  border: 1px solid var(--mauve); border-radius: 999px; color: var(--mauve); background: transparent;
+  border: 1px solid var(--mauve); border-radius: 2px; color: var(--mauve); background: transparent;
   font: 500 13px/1 var(--body-font); white-space: nowrap; transition: background-color .2s, color .2s;
 }
 .chip:hover { background: var(--pink-soft); }
@@ -102,13 +104,17 @@ p { margin: 0; }
   font: 600 10px/18px var(--body-font); text-align: center;
 }
 
-/* Розовая карточка-баннер с декоративными цветками */
+/* Оливковая карточка-баннер (как подложка логотипа донора), текст кремовый */
 .pink-card {
-  position: relative; background: var(--pink); border-radius: var(--radius-xl); overflow: hidden; isolation: isolate;
+  position: relative; background: var(--mauve); color: var(--cream); border-radius: var(--radius-xl); overflow: hidden; isolation: isolate;
 }
+.pink-card h1, .pink-card h2, .pink-card h3 { color: var(--cream); }
+.pink-card .btn--white { background: var(--cream); color: var(--mauve-dark); }
+.pink-card .btn--outline, .pink-card .badge { border-color: var(--cream); color: var(--cream); }
+.pink-card .btn--outline:hover { background: var(--cream); color: var(--mauve); }
 .pink-card::before, .pink-card::after {
-  content: ''; position: absolute; z-index: -1; width: 190px; height: 190px; opacity: .45;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='50' cy='27' r='23'/%3E%3Ccircle cx='50' cy='73' r='23'/%3E%3Ccircle cx='27' cy='50' r='23'/%3E%3Ccircle cx='73' cy='50' r='23'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  content: ''; position: absolute; z-index: -1; width: 190px; height: 190px; opacity: .06;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23f3eedc'%3E%3Ccircle cx='50' cy='27' r='23'/%3E%3Ccircle cx='50' cy='73' r='23'/%3E%3Ccircle cx='27' cy='50' r='23'/%3E%3Ccircle cx='73' cy='50' r='23'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
 }
 .pink-card::before { top: -40px; left: -40px; }
 .pink-card::after { right: 40px; bottom: -70px; }
@@ -135,7 +141,7 @@ p { margin: 0; }
   background: var(--white); font-size: 15px; transition: border-color .2s, box-shadow .2s;
 }
 textarea.input { height: auto; min-height: 110px; padding: 14px 18px; resize: vertical; }
-.input:focus { outline: none; border-color: var(--mauve); box-shadow: 0 0 0 3px rgba(154, 103, 122, .15); }
+.input:focus { outline: none; border-color: var(--mauve); box-shadow: 0 0 0 3px rgba(67, 71, 48, .15); }
 .input.is-error { border-color: #d0566b; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.4; cursor: pointer; }
 .check input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--mauve); flex: none; }

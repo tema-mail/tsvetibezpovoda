@@ -1,12 +1,11 @@
-// Отправка форм в приёмник Тильды – те же получатели (formservices), что на живом milovinisamara.ru,
-// поэтому заявки и заказы приходят туда же, куда сейчас. Список снят из форм сайта 13.10.2026.
+// Отправка форм в приёмник Тильды – те же получатели (formservices), что в корзине живого tsvetibezpovoda.ru,
+// поэтому заказы приходят туда же, куда сейчас. Сняты с главной донора 27.10.2026.
 export const FORM_ACTION = 'https://forms.tildacdn.com/procces/';
 export const FORM_SERVICES = [
-  'd9f103ba2ffa8dd95c92416c99770283',
-  'db9c228c7af0d4ba79e3f61c9430dd7a',
-  '299ffaf059b9db584cefba548b75d0c4',
+  '5522f1658a6ad270f3032a81eb75a717',
+  'acbf564f70d624f3df845e34ea950b91',
 ];
-export const TILDA = { projectId: '33165509', pageId: '199861909', formsKey: '14683579f32d09a74ffe9fac33165509' };
+export const TILDA = { projectId: '12504825', pageId: '64910143', formsKey: 'fea9d6cebdc70108f340bd1112504825' };
 
 /**
  * Шлёт поля формы. Приёмник Тильды не отдаёт CORS-заголовки, поэтому запрос no-cors:

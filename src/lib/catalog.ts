@@ -4,6 +4,8 @@ import partsJson from '../data/parts.json';
 export interface Product {
   id: string;
   path: string;
+  /** Адрес товара на доноре (для 301). */
+  old?: string;
   title: string;
   descr: string;
   text: string;
@@ -53,30 +55,21 @@ export const toCard = (p: Product): Card => ({
 
 export const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
 
-// Разделы магазина Тильды (uid) – константы, чтобы страницы и меню ссылались на одно и то же.
+// Разделы магазина донора (uid) – константы, чтобы страницы и меню ссылались на одно и то же.
 export const PART = {
-  compositions: '955321941123',
-  baskets: '939331460413',
-  boxes: '432948151193',
-  popular: '585058774593',
-  bouquets: '341115852183',
-  author: '740114444853',
-  mono: '904968341543',
-  novelty: '450912090363',
-  sale: '265012082143',
-  balloons: '141481287633',
-  roses: '860023310113',
-  ecuador: '972753228283',
-  kenya: '284065491443',
-  french: '517735929953',
-  wow: '821166776143',
-  cards: '145489391773',
-  teacher: '531994305643',
-  toys: '935082851263',
+  premium: '877159492202',
+  sale: '679504980532',
+  mono: '901181325322',
+  hits: '313851531702',
+  mixed: '871717766742',
+  compositions: '791447291042',
+  wedding: '865143636392',
+  roses: '648946318343',
+  chrysanthemums: '301155593693',
 } as const;
 
-/** Допродажа на странице заказа: открытки, игрушки, шары. */
-export const addonParts = [PART.cards, PART.toys, PART.balloons];
+/** Допродажа на странице заказа: у донора открыток и игрушек отдельным товаром нет. */
+export const addonParts: string[] = [];
 
 /** Чип фильтра для острова Catalog: раздел со всеми подразделами. */
 export interface Chip { id: string; title: string; ids: string[]; children?: Chip[] }
@@ -87,12 +80,12 @@ export function chip(id: string, title?: string, withChildren = true): Chip {
     children: withChildren && p.children.length ? p.children.map((c) => chip(c.id, undefined, false)) : undefined,
   };
 }
-/** Чипы общего каталога – все разделы магазина, кроме служебного «Популярное». */
-export const allChips = (): Chip[] => parts.filter((p) => p.id !== PART.popular).map((p) => chip(p.id));
+/** Чипы общего каталога – разделы магазина донора, в которых есть товары (пустые «Свадебные букеты» не показываем). */
+export const allChips = (): Chip[] => parts.filter((p) => products.some((x) => inPart(x, p.id))).map((p) => chip(p.id));
 
-/** Товары страницы-каталога: раздел (с подразделами) или совпадение в названии. */
-export function catalogCards(part: string, match?: string): Card[] {
+/** Товары страницы-каталога: раздел с подразделами. */
+export function catalogCards(part: string): Card[] {
   return products
-    .filter((p) => p.images.length && p.price && (inPart(p, part) || (match ? p.title.includes(match) : false)))
+    .filter((p) => p.images.length && p.price && inPart(p, part))
     .map(toCard);
 }

@@ -10,14 +10,9 @@ import { IconArrow, IconChevron, IconClose, IconFlower, IconPhone, IconSearch, S
 // раздел раскрывается в подразделы; внизу всегда закреплена «Заказать букет».
 
 const LINKS = [
-  { label: 'Каталог цветов', href: '/catalog' },
-  { label: 'Акции', href: '/akcii' },
-  { label: 'Корпоративным клиентам', href: '/corparate' },
-  { label: 'Доставка и оплата 24/7', href: '/delivery' },
-  { label: 'Гарантии', href: '/garantee' },
-  { label: 'Отзывы', href: '/#rev' },
-  { label: 'О компании', href: '/about' },
-  { label: 'Контакты', href: '/contact' },
+  { label: 'Весь каталог', href: '/catalog' },
+  { label: 'Доставка и оплата', href: '/delivery' },
+  { label: 'Контакты', href: '/contacts' },
 ];
 
 const plural = (n: number) => {
@@ -56,7 +51,7 @@ export default function MobileMenu({ tiles }: { tiles: MenuTile[] }) {
             <IconChevron back /> <span>{drill.title}</span>
           </button>
         ) : (
-          <a class="mm__logo" href={u('/')} onClick={close}><img src={u('/img/logo.svg')} alt="Milovini Flowers" /></a>
+          <a class="mm__logo" href={u('/')} onClick={close}><img src={u('/img/logo.svg')} alt="Цветы без повода" /></a>
         )}
         <button type="button" class="mm__close" aria-label="Закрыть меню" onClick={close}><IconClose /></button>
       </div>

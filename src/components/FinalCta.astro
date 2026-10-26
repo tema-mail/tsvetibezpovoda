@@ -1,10 +1,24 @@
 ---
-// Баннер «Хотите порадовать близкого человека уже сегодня?» – внизу почти каждой страницы.
-import PinkCta from './PinkCta.astro';
+// Баннер внизу страниц: позвать в каталог или на звонок. Тексты – из обещаний донора.
+import Btn from './Btn.astro';
 ---
-<PinkCta
-  title="Хотите порадовать близкого человека уже сегодня?"
-  text="Выберите готовый букет в каталоге или расскажите нам, кому и по какому поводу нужны цветы. Флорист поможет с выбором, а перед доставкой мы пришлём фото готового заказа."
-  image="https://static.tildacdn.com/tild3138-6339-4164-b861-613337643163/image_33.png"
-  buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
-/>
+<section class="section container">
+  <div class="fc pink-card reveal">
+    <h2 class="h2">Выберите букет – доставим по Курску за 60 минут</h2>
+    <p>Выберите букет в каталоге или оставьте телефон – поможем с выбором. Открытка и средство по уходу за букетом – в подарок.</p>
+    <div class="fc__btns">
+      <Btn label="Выбрать букет" href="/catalog" variant="white" flower />
+      <Btn label="Помогите выбрать" lead variant="outline" />
+    </div>
+  </div>
+</section>
+<style>
+  .fc { display: grid; gap: 18px; justify-items: start; padding: 64px 56px; }
+  .fc p { max-width: 640px; font-size: 16px; line-height: 1.6; }
+  .fc__btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  @media (max-width: 1023px) {
+    .fc { padding: 32px 20px; }
+    .fc__btns { flex-direction: column; width: 100%; }
+    .fc__btns :global(.btn) { width: 100%; }
+  }
+</style>

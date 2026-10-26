@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { Card } from '../lib/catalog';
 import { addToCart, cart, cartTotal, clearCart, fmt, removeFromCart, setQty } from '../lib/store';
-import { FREE_FROM, NIGHT, SLOTS, ZONES, deliveryPrice, isNightSlot } from '../lib/delivery';
+import { DELIVERY_FROM, FREE_FROM, HOURS, SLOTS, deliveryPrice } from '../lib/delivery';
 import { sendForm, thanksUrl } from '../lib/forms';
 import { maskPhone, phoneOk } from '../lib/phone';
 import { SITE } from '../lib/site';
@@ -12,10 +12,10 @@ import { IconBag, IconFlower, IconMinus, IconPlus, IconTrash } from './icons';
 // нормальная страница оформления). Поля, которые ждёт приёмник Тильды, названы как в форме корзины
 // на живом сайте: Имя, Телефон, Открытка, Получатель, Имя получателя, Телефон получателя, Дата, Время.
 
+// Способы оплаты – как в корзине донора.
 const PAY = [
-  { id: 'link', title: 'По ссылке или QR-коду', note: 'Пришлём ссылку после подтверждения заказа' },
-  { id: 'card', title: 'Банковской картой', note: 'При получении или в магазине' },
-  { id: 'cash', title: 'Наличными', note: 'Курьеру или при самовывозе' },
+  { id: 'transfer', title: 'Переводом', note: 'После подтверждения заказа' },
+  { id: 'cash', title: 'Наличными при самовывозе', note: 'В нашей студии' },
 ];
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -52,7 +52,6 @@ export default function Order({ addons }: { addons: Card[] }) {
   const [rPhone, setRPhone] = useState('');
   const [anon, setAnon] = useState(false);
   const [mode, setMode] = useState<'courier' | 'pickup'>('courier');
-  const [zone, setZone] = useState('center');
   const [address, setAddress] = useState('');
   const [flat, setFlat] = useState('');
   const [askRecipient, setAskRecipient] = useState(false);
@@ -60,30 +59,22 @@ export default function Order({ addons }: { addons: Card[] }) {
   const [day, setDay] = useState(isoDay(today));
   const [slot, setSlot] = useState('asap');
   const [card, setCard] = useState('');
-  const [pay, setPay] = useState('link');
-  const [first, setFirst] = useState(false);
+  const [pay, setPay] = useState('transfer');
   const [comment, setComment] = useState('');
-  const [agree, setAgree] = useState(true);
+  const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [showSum, setShowSum] = useState(false);
 
   const items = ready ? cart.value : [];
   const subtotal = ready ? cartTotal.value : 0;
-  const night = slot !== 'asap' && isNightSlot(slot);
-  const dPrice = mode === 'pickup' ? 0 : deliveryPrice(zone, subtotal, night);
+  const dPrice = deliveryPrice(subtotal, mode === 'pickup');
   const total = subtotal + (dPrice ?? 0);
-  const bonus = Math.floor(subtotal * 0.05);
   const tomorrow = isoDay(new Date(today.getTime() + 864e5));
   const isToday = day === isoDay(today);
-  // Сегодня – только интервалы, которые ещё не начались (час назад запас на сборку).
+  // Сегодня – только интервалы, которые ещё не начались (час запаса на сборку).
   const hour = today.getHours();
-  const slots = SLOTS.filter((s) => {
-    if (!isToday) return true;
-    const h = parseInt(s, 10);
-    const start = h < 9 ? h + 24 : h;
-    return start >= hour + 1;
-  });
+  const slots = SLOTS.filter((s) => !isToday || parseInt(s, 10) >= hour + 1);
 
   const err = (k: string) => errors[k] && <span class="of-err">{errors[k]}</span>;
 
@@ -92,7 +83,7 @@ export default function Order({ addons }: { addons: Card[] }) {
     const er: Record<string, string> = {};
     if (!items.length) er.items = 'Корзина пуста';
     if (!name.trim()) er.name = 'Как к вам обращаться?';
-    if (!phoneOk(phone)) er.phone = 'Нужен телефон, чтобы согласовать фото букета';
+    if (!phoneOk(phone)) er.phone = 'Нужен телефон, чтобы подтвердить заказ';
     if (who === 'other' && !rName.trim()) er.rName = 'Имя получателя';
     if (who === 'other' && !phoneOk(rPhone)) er.rPhone = 'Телефон получателя – курьер позвонит перед приездом';
     if (mode === 'courier' && !address.trim() && !askRecipient) er.address = 'Укажите адрес или отметьте «уточнить у получателя»';
@@ -104,7 +95,6 @@ export default function Order({ addons }: { addons: Card[] }) {
     }
     setBusy(true);
     const num = `${pad(today.getDate())}${pad(today.getMonth() + 1)}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const z = ZONES.find((x) => x.id === zone)!;
     const lines = items.map((i) => `${i.title} × ${i.qty} = ${fmt(i.price * i.qty)}`).join('\n');
     const fields: Record<string, string> = {
       'Номер заказа': num,
@@ -114,13 +104,12 @@ export default function Order({ addons }: { addons: Card[] }) {
       'Имя получателя': who === 'other' ? rName : '',
       'Телефон получателя': who === 'other' ? rPhone : '',
       'Анонимно': anon ? 'Не говорить получателю, от кого цветы' : '',
-      'Доставка': mode === 'pickup' ? `Самовывоз: ${SITE.city}, ${SITE.address}` : `${z.title} (${dPrice === null ? 'стоимость уточнит менеджер' : dPrice === 0 ? 'бесплатно' : fmt(dPrice)})`,
+      'Доставка': mode === 'pickup' ? `Самовывоз: ${SITE.city}, ${SITE.address}` : `Курьером по Курску (${dPrice === 0 ? 'бесплатно' : `от ${fmt(DELIVERY_FROM)}, сумму уточнит менеджер`})`,
       'Адрес': mode === 'courier' ? (askRecipient ? 'Уточнить у получателя' : [address, flat].filter(Boolean).join(', кв./офис ')) : '',
       'Дата': human(day),
-      'Время': slot === 'asap' ? 'Как можно скорее (от 60 минут)' : slot,
+      'Время': slot === 'asap' ? 'Как можно скорее (60 минут после оплаты)' : slot,
       'Открытка': card,
       'Оплата': PAY.find((p) => p.id === pay)!.title,
-      'Первый заказ': first ? 'Да – скидка 20% на первый заказ' : '',
       'Комментарий': comment,
       'Заказ': lines,
       'Сумма товаров': fmt(subtotal),
@@ -130,7 +119,7 @@ export default function Order({ addons }: { addons: Card[] }) {
     const ok = await sendForm('Cart', fields);
     setBusy(false);
     if (!ok) { setErrors({ send: `Не получилось отправить заказ. Позвоните нам: ${SITE.phone}` }); return; }
-    try { sessionStorage.setItem('mv_last_order', num); } catch {}
+    try { sessionStorage.setItem('tbp_last_order', num); } catch {}
     clearCart();
     location.href = thanksUrl();
   };
@@ -143,7 +132,6 @@ export default function Order({ addons }: { addons: Card[] }) {
         <p>Выберите букет – а оформить заказ можно будет здесь, за пару минут.</p>
         <div class="of-empty__btns">
           <a class="btn btn--mauve" href={u('/catalog')}>Перейти в каталог</a>
-          <button type="button" class="btn btn--outline" data-lead>Помогите выбрать</button>
         </div>
       </div>
     );
@@ -158,11 +146,9 @@ export default function Order({ addons }: { addons: Card[] }) {
       </ul>
       <dl class="of-sum__rows">
         <div><dt>Товары</dt><dd>{fmt(subtotal)}</dd></div>
-        <div><dt>{mode === 'pickup' ? 'Самовывоз' : 'Доставка'}</dt><dd>{dPrice === null ? 'уточнит менеджер' : dPrice === 0 ? 'бесплатно' : fmt(dPrice)}</dd></div>
-        {first && <div class="is-accent"><dt>Скидка 20% на первый заказ</dt><dd>при подтверждении</dd></div>}
+        <div><dt>{mode === 'pickup' ? 'Самовывоз' : 'Доставка'}</dt><dd>{dPrice === null ? `от ${fmt(DELIVERY_FROM)}` : dPrice === 0 ? 'бесплатно' : fmt(dPrice)}</dd></div>
         <div class="of-sum__total"><dt>Итого</dt><dd>{fmt(total)}{dPrice === null && <small> + доставка</small>}</dd></div>
       </dl>
-      <p class="of-sum__bonus">+{fmt(bonus)} бонусами на следующий заказ</p>
     </div>
   );
 
@@ -188,8 +174,8 @@ export default function Order({ addons }: { addons: Card[] }) {
               </li>
             ))}
           </ul>
-          {subtotal < FREE_FROM && mode === 'courier' && zone === 'center' && (
-            <p class="of-hint">Добавьте ещё на {fmt(FREE_FROM - subtotal)} – и доставка по центральным районам станет бесплатной.</p>
+          {subtotal < FREE_FROM && mode === 'courier' && (
+            <p class="of-hint">Добавьте ещё на {fmt(FREE_FROM - subtotal)} – и доставка по Курску станет бесплатной.</p>
           )}
           {addons.length > 0 && (
             <div class="of-addons">
@@ -241,22 +227,10 @@ export default function Order({ addons }: { addons: Card[] }) {
           <Seg name="Способ получения" value={mode} onChange={setMode} options={[{ id: 'courier', title: 'Курьером' }, { id: 'pickup', title: 'Самовывоз' }]} />
           {mode === 'courier' ? (
             <>
-              <div class="of-zones" role="radiogroup" aria-label="Район доставки">
-                {ZONES.filter((z) => z.id !== 'pickup').map((z) => {
-                  const p = deliveryPrice(z.id, subtotal, night);
-                  return (
-                    <label class={`of-zone${zone === z.id ? ' is-on' : ''}`}>
-                      <input type="radio" name="zone" checked={zone === z.id} onChange={() => setZone(z.id)} />
-                      <span class="of-zone__top"><b>{z.title}</b><em>{p === null ? (z.id === 'center' ? `бесплатно от ${fmt(FREE_FROM)}` : 'уточним') : p === 0 ? 'бесплатно' : `+${fmt(p)}`}</em></span>
-                      <span class="of-zone__areas">{z.areas.join(', ')}</span>
-                    </label>
-                  );
-                })}
-              </div>
-              {night && <p class="of-hint">{NIGHT.note}</p>}
+              <p class="of-hint">Доставка по Курску от {fmt(DELIVERY_FROM)} – сумму по району назовёт менеджер; от {fmt(FREE_FROM)} – бесплатно. Удалённые районы могут занять больше времени.</p>
               <div class="of-grid of-grid--addr">
                 <label class="field"><span class="field__label">Улица и дом</span>
-                  <input class={`input${errors.address ? ' is-error' : ''}`} autoComplete="street-address" placeholder="Например, ул. Ленинградская, 45" value={address} disabled={askRecipient} onInput={(e) => setAddress((e.target as HTMLInputElement).value)} />{err('address')}</label>
+                  <input class={`input${errors.address ? ' is-error' : ''}`} autoComplete="street-address" placeholder="Например, ул. Ленина, 10" value={address} disabled={askRecipient} onInput={(e) => setAddress((e.target as HTMLInputElement).value)} />{err('address')}</label>
                 <label class="field"><span class="field__label">Квартира / офис</span>
                   <input class="input" value={flat} disabled={askRecipient} onInput={(e) => setFlat((e.target as HTMLInputElement).value)} /></label>
               </div>
@@ -267,7 +241,7 @@ export default function Order({ addons }: { addons: Card[] }) {
           ) : (
             <div class="of-pickup">
               <b>{SITE.city}, {SITE.address}</b>
-              <span>Работаем круглосуточно. Оплатить при самовывозе можно наличными.</span>
+              <span>{SITE.hours}. Оплатить при самовывозе можно наличными.</span>
               <a href={SITE.yandexOrg} target="_blank" rel="noopener">Открыть на карте →</a>
             </div>
           )}
@@ -276,23 +250,23 @@ export default function Order({ addons }: { addons: Card[] }) {
         <Section n={4} title="Когда">
           <div class="of-days">
             <button type="button" class={day === isoDay(today) ? 'is-on' : ''} onClick={() => setDay(isoDay(today))}>Сегодня<small>{human(isoDay(today))}</small></button>
-            <button type="button" class={day === tomorrow ? 'is-on' : ''} onClick={() => { setDay(tomorrow); if (slot === 'asap') setSlot(SLOTS[2]); }}>Завтра<small>{human(tomorrow)}</small></button>
+            <button type="button" class={day === tomorrow ? 'is-on' : ''} onClick={() => { setDay(tomorrow); if (slot === 'asap') setSlot(SLOTS[0]); }}>Завтра<small>{human(tomorrow)}</small></button>
             <label class={`of-days__pick${day !== isoDay(today) && day !== tomorrow ? ' is-on' : ''}`}>
               Другая дата<small>{day !== isoDay(today) && day !== tomorrow ? human(day) : 'выбрать'}</small>
-              <input type="date" min={isoDay(today)} value={day} onChange={(e) => { const v = (e.target as HTMLInputElement).value; if (v) { setDay(v); if (slot === 'asap') setSlot(SLOTS[2]); } }} />
+              <input type="date" min={isoDay(today)} value={day} onChange={(e) => { const v = (e.target as HTMLInputElement).value; if (v) { setDay(v); if (slot === 'asap') setSlot(SLOTS[0]); } }} />
             </label>
           </div>
           <p class="of-label">{mode === 'pickup' ? 'Когда заберёте' : 'Интервал доставки'}</p>
           <div class="of-slots">
-            {isToday && <button type="button" class={slot === 'asap' ? 'is-on' : ''} onClick={() => setSlot('asap')}>Как можно скорее<small>от 60 минут</small></button>}
+            {isToday && <button type="button" class={slot === 'asap' ? 'is-on' : ''} onClick={() => setSlot('asap')}>Как можно скорее<small>за 60 минут после оплаты</small></button>}
             {slots.map((s) => (
-              <button type="button" class={slot === s ? 'is-on' : ''} onClick={() => setSlot(s)}>{s}{isNightSlot(s) && <small>ночь</small>}</button>
+              <button type="button" class={slot === s ? 'is-on' : ''} onClick={() => setSlot(s)}>{s}</button>
             ))}
           </div>
         </Section>
 
         <Section n={5} title="Открытка и пожелания">
-          <label class="field"><span class="field__label">Текст в открытку <small class="muted">– напишем от руки</small></span>
+          <label class="field"><span class="field__label">Текст в открытку <small class="muted">– открытка в подарок к каждому заказу</small></span>
             <textarea class="input" rows={3} maxLength={300} placeholder="Например: С днём рождения, мама! Люблю тебя" value={card} onInput={(e) => setCard((e.target as HTMLTextAreaElement).value)} /></label>
           <label class="field"><span class="field__label">Комментарий к заказу</span>
             <textarea class="input" rows={2} placeholder="Пожелания по оформлению, удобное время звонка и т. п." value={comment} onInput={(e) => setComment((e.target as HTMLTextAreaElement).value)} /></label>
@@ -308,8 +282,7 @@ export default function Order({ addons }: { addons: Card[] }) {
               </label>
             ))}
           </div>
-          <label class="check"><input type="checkbox" checked={first} onChange={(e) => setFirst((e.target as HTMLInputElement).checked)} /><span>Это мой первый заказ в Milovini – хочу скидку 20%</span></label>
-          <p class="of-note">Оплата после подтверждения: флорист соберёт букет, пришлёт фото на согласование и подтвердит итоговую сумму.</p>
+          <p class="of-note">Оплата после подтверждения: менеджер свяжется с вами и назовёт итоговую сумму с доставкой.</p>
         </Section>
       </div>
 
@@ -322,15 +295,15 @@ export default function Order({ addons }: { addons: Card[] }) {
           {summary}
         </div>
         <div class="of-sum__submit">
-          <label class="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree((e.target as HTMLInputElement).checked)} /><span>Согласен на обработку персональных данных согласно <a href={u('/policy')} target="_blank">политике конфиденциальности</a></span></label>
+          <label class="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree((e.target as HTMLInputElement).checked)} /><span>Согласен на обработку персональных данных согласно <a href={u('/privacy')} target="_blank">политике конфиденциальности</a></span></label>
           {err('agree')}
           {errors.send && <p class="form-err" role="alert">{errors.send}</p>}
           <button type="submit" class="btn btn--mauve btn--block of-submit" disabled={busy}>
             {busy ? 'Отправляем…' : <>Оформить заказ · {fmt(total)} <IconFlower /></>}
           </button>
           <ul class="of-trust">
-            <li>Пришлём фото букета до отправки</li>
-            <li>Гарантия свежести 48 часов</li>
+            <li>Открытка и средство по уходу – в подарок</li>
+            <li>{HOURS}</li>
             <li>Вопросы – <a href={SITE.phoneHref}>{SITE.phone}</a></li>
           </ul>
         </div>

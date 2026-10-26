@@ -37,9 +37,9 @@ function CartSheet() {
         <>
           <div class="cs__free">
             {left > 0 ? (
-              <span>До бесплатной доставки по центру – <b>{fmt(left)}</b></span>
+              <span>До бесплатной доставки по Курску – <b>{fmt(left)}</b></span>
             ) : (
-              <span>Доставка по центральным районам – <b>бесплатно</b></span>
+              <span>Доставка по Курску – <b>бесплатно</b></span>
             )}
             <i style={{ '--p': `${Math.min(100, (total / FREE_FROM) * 100)}%` }} />
           </div>
@@ -53,7 +53,7 @@ function CartSheet() {
         <div class="empty">
           <span class="empty__icon"><IconBag size={30} /></span>
           <p class="empty__title">В корзине пока пусто</p>
-          <p>Выберите букет в каталоге – флорист соберёт его и пришлёт фото перед доставкой.</p>
+          <p>Выберите букет в каталоге – доставим по Курску за 60 минут.</p>
           <a class="btn btn--pink" href={u('/catalog')}>Перейти в каталог</a>
         </div>
       ) : (

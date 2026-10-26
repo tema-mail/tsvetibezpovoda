@@ -27,10 +27,10 @@ const { title, sub, action, center = false, items, id } = Astro.props as {
   .ic__icon { width: 50px; height: 50px; margin-bottom: auto; padding-bottom: 40px; box-sizing: content-box; }
   .ic__title { font-size: clamp(22px, 2vw, 30px); }
   .ic__text { font-size: 13.5px; line-height: 1.5; }
-  .ic__img { margin-top: auto; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; }
+  .ic__img { margin-top: auto; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-l); }
   @media (max-width: 1023px) {
     .ic { grid-template-columns: 1fr 1fr; gap: 10px; }
-    .ic__card { min-height: 0; padding: 16px; gap: 8px; border-radius: 16px; }
+    .ic__card { min-height: 0; padding: 16px; gap: 8px; border-radius: var(--radius-l); }
     .ic__icon { width: 40px; height: 40px; padding-bottom: 18px; }
     .ic__title { font-size: 19px; }
     .ic__text { font-size: 12.5px; }

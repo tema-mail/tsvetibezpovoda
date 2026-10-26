@@ -20,11 +20,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Показная копия: подпапка репозитория и закрыто от индексации (живой сайт клиента – milovinisamara.ru).
+      # Показная копия: подпапка репозитория и закрыто от индексации (живой сайт донора – tsvetibezpovoda.ru).
       - run: npm run build
         env:
-          PUBLIC_BASE: /milovini-samara
-          PUBLIC_SITE_URL: https://tema-mail.github.io/milovini-samara
+          PUBLIC_BASE: /tsvetibezpovoda
+          PUBLIC_SITE_URL: https://tema-mail.github.io/tsvetibezpovoda
           PUBLIC_NOINDEX: '1'
       - run: touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3

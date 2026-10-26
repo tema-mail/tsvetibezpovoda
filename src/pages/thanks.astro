@@ -3,9 +3,10 @@ import Base from '../layouts/Base.astro';
 import { u } from '../lib/url';
 import { SITE } from '../lib/site';
 import { img } from '../lib/img';
-const photo = 'https://static.tildacdn.com/tild6166-3533-4163-a139-616561643762/image.png';
+import { products } from '../lib/catalog';
+const photo = products[2].images[0];
 ---
-<Base title="Спасибо – Milovini Flowers" noindex noSticky>
+<Base title="Спасибо – Цветы без повода" noindex noSticky>
   <section class="container ty">
     <div class="ty__card pink-card">
       <span class="ty__ok" aria-hidden="true">✓</span>
@@ -22,11 +23,11 @@ const photo = 'https://static.tildacdn.com/tild6166-3533-4163-a139-616561643762/
   <script>
     // Страница заказа кладёт номер заказа – показываем его.
     try {
-      const n = sessionStorage.getItem('mv_last_order');
+      const n = sessionStorage.getItem('tbp_last_order');
       if (n) {
         const t = document.getElementById('ty-text');
-        if (t) t.textContent = `Заказ №${n} принят. Флорист соберёт букет, пришлёт фото на согласование и свяжется с вами для подтверждения.`;
-        sessionStorage.removeItem('mv_last_order');
+        if (t) t.textContent = `Заказ №${n} принят. Менеджер свяжется с вами, подтвердит заказ и сумму доставки.`;
+        sessionStorage.removeItem('tbp_last_order');
       }
     } catch {}
   </script>

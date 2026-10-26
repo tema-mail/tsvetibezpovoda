@@ -1,9 +1,8 @@
 ---
-// Карточка товара – по исходному адресу каждого товара на Тильде (/catalog/tproduct/…, /catalog/byket/tproduct/…, /tproduct/…).
+// Карточка товара – ЧПУ /catalog/<раздел>/<товар-из-названия> (адрес строит npm run data, старый адрес донора – в поле old).
 import Base from '../layouts/Base.astro';
 import Crumbs from '../components/Crumbs.astro';
 import SectionHead from '../components/SectionHead.astro';
-import Reviews from '../components/Reviews.astro';
 import ProductBuy from '../islands/ProductBuy';
 import Catalog from '../islands/Catalog';
 import { products, toCard, partById, addonParts, inPart, rub, type Product } from '../lib/catalog';
@@ -16,8 +15,8 @@ export function getStaticPaths() {
 }
 const { p } = Astro.props as { p: Product };
 
-// Хлебная крошка – первая страница-каталог, в которую входит товар.
-const cat = CATALOGS.find((c) => inPart(p, c.part));
+// Хлебная крошка – раздел из адреса товара.
+const cat = CATALOGS.find((c) => p.path.startsWith(`/catalog/${c.slug}/`));
 const isAddon = addonParts.some((id) => inPart(p, id));
 const similar = products
   .filter((x) => x.id !== p.id && x.price && x.images.length && x.parts.some((id) => p.parts.includes(id)))
@@ -26,8 +25,8 @@ const addons = isAddon ? [] : products
   .filter((x) => x.price && x.images.length && addonParts.some((id) => inPart(x, id)))
   .slice(0, 12).map(toCard);
 const partNames = p.parts.map((id) => partById.get(id)?.title).filter(Boolean);
-const title = `${p.title} – купить с доставкой по Самаре за ${rub(p.price!)} | Milovini Flowers`;
-const desc = `${p.title}${p.descr ? ': ' + p.descr.toLowerCase() : ''}. ${rub(p.price!)}. Доставка по Самаре 24/7 от 60 минут, фото перед доставкой, гарантия 48 часов.`;
+const title = `${p.title} – купить с доставкой по Курску за ${rub(p.price!)} | ${SITE.name}`;
+const desc = `${p.title}${p.descr ? ': ' + p.descr.toLowerCase() : ''}. ${rub(p.price!)}. Доставка по Курску за 60 минут, открытка и средство по уходу в подарок.`;
 const ld = {
   '@context': 'https://schema.org', '@type': 'Product', name: p.title, description: p.descr || p.title,
   image: p.images.map((i) => new URL(u(i + '-1000.webp'), Astro.site).href), sku: p.id,
@@ -67,10 +66,10 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
         </div>
         <ProductBuy client:load p={buy} />
         <ul class="pp__perks">
-          <li><b>Фото перед доставкой</b><span>Пришлём фото готового букета на согласование</span></li>
-          <li><b>Доставка от 60 минут</b><span>Круглосуточно по Самаре, бесплатно по центру от {FREE_FROM.toLocaleString('ru-RU')} ₽</span></li>
-          <li><b>Гарантия 48 часов</b><span>На свежесть цветов с момента доставки</span></li>
-          <li><b>5% бонусов</b><span>Начислим с заказа на следующую покупку</span></li>
+          <li><b>Доставка за 60 минут</b><span>По Курску с момента оплаты, ежедневно с 10:00 до 00:00</span></li>
+          <li><b>Бесплатно от {FREE_FROM.toLocaleString('ru-RU')} ₽</b><span>Доставка по Курску – от 250 ₽ в зависимости от района</span></li>
+          <li><b>Открытка в подарок</b><span>И средство по уходу за букетом к каждому заказу</span></li>
+          <li><b>Скидки постоянным</b><span>Бонусная система и скидки постоянным клиентам</span></li>
         </ul>
         {p.text && (
           <div class="pp__text">
@@ -78,7 +77,7 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
             <div set:html={p.text} />
           </div>
         )}
-        <p class="pp__help">Нужен другой размер или оттенок? <button type="button" class="link" data-lead>Попросите флориста</button> или позвоните <a href={SITE.phoneHref}>{SITE.phone}</a></p>
+        <p class="pp__help">Нужен другой размер или оттенок? <button type="button" class="link" data-lead>Оставьте телефон</button> или позвоните <a href={SITE.phoneHref}>{SITE.phone}</a></p>
       </div>
     </div>
   </div>
@@ -95,7 +94,6 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
       <Catalog client:visible cards={similar} step={8} prices={false} sort={false} />
     </section>
   )}
-  <Reviews id="reviews" />
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
 </Base>
 
@@ -120,9 +118,9 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
   .pp__slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: var(--radius-xl); scrollbar-width: none; background: var(--bg-soft); }
   .pp__slides::-webkit-scrollbar { display: none; }
   .pp__slides img { flex: none; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; scroll-snap-align: start; }
-  .pp__mark { position: absolute; top: 18px; left: 18px; padding: 8px 12px; border-radius: 999px; background: var(--mauve); color: #fff; font-weight: 600; font-size: 13px; }
+  .pp__mark { position: absolute; top: 18px; left: 18px; padding: 8px 12px; border-radius: 2px; background: var(--mauve); color: var(--cream); font-weight: 600; font-size: 13px; }
   .pp__thumbs { display: flex; gap: 10px; margin-top: 12px; }
-  .pp__thumb { width: 76px; height: 92px; padding: 0; border: 2px solid transparent; border-radius: 14px; overflow: hidden; background: none; opacity: .65; transition: opacity .2s, border-color .2s; }
+  .pp__thumb { width: 76px; height: 92px; padding: 0; border: 2px solid transparent; border-radius: var(--radius-l); overflow: hidden; background: none; opacity: .65; transition: opacity .2s, border-color .2s; }
   .pp__thumb.is-on { border-color: var(--mauve); opacity: 1; }
   .pp__thumb img { width: 100%; height: 100%; object-fit: cover; }
   .pp__info { display: grid; gap: 18px; }
@@ -134,7 +132,7 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
   .pp__price s { font-size: 18px; color: var(--muted); }
   .pp__save { padding: 6px 12px; border-radius: 999px; background: var(--pink-soft); color: var(--mauve); font-size: 13px; font-weight: 600; }
   .pp__perks { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .pp__perks li { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: var(--bg-soft); font-size: 12.5px; line-height: 1.4; }
+  .pp__perks li { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--radius-l); background: var(--bg-soft); font-size: 12.5px; line-height: 1.4; }
   .pp__perks b { color: var(--ink); font-size: 14px; }
   .pp__text { padding-top: 6px; border-top: 1px solid var(--line); }
   .pp__h { font: 400 22px/1.2 var(--head-font); color: var(--mauve); margin: 16px 0 10px; }
