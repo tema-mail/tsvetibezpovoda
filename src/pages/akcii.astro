@@ -1,0 +1,29 @@
+---
+// Акции – страница эталона Milovini; постов (фида) у донора нет, поэтому только раздел «Акции» каталога донора.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import FinalCta from '../components/FinalCta.astro';
+import ContactCard from '../components/ContactCard.astro';
+import Catalog from '../islands/Catalog';
+import { catalogCards, PART, photo } from '../lib/catalog';
+import { SITE } from '../lib/site';
+const sale = catalogCards(PART.sale);
+const min = Math.min(...sale.map((x) => x.price));
+---
+<Base title={`Акции на цветы в Курске – ${SITE.name}`} description={`Букеты по акции «${SITE.name}»: ${sale.length} предложений от ${min.toLocaleString('ru-RU')} ₽. Доставка по Курску за 60 минут, открытка и средство по уходу в подарок.`}>
+  <PageHero
+    crumbs={[{ label: 'Главная', href: '/' }, { label: 'Акции' }]}
+    title="Акции «Цветы без повода»"
+    text="Специальные предложения на букеты и композиции с доставкой по Курску"
+    image={sale[0]?.img ?? photo(0)}
+    buttons={[{ label: 'Смотреть акции', href: '/akcii#list' }, { label: 'Помогите выбрать', href: '/#Quiz' }]}
+    small
+  />
+  <section class="section container" id="list">
+    <SectionHead title="Букеты по акции" sub={`${sale.length} предложений со скидкой`} />
+    <Catalog client:visible cards={sale} step={8} />
+  </section>
+  <FinalCta />
+  <ContactCard />
+</Base>

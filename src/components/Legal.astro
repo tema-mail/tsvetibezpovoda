@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Crumbs from './Crumbs.astro';
 import legal from '../data/legal.json';
 import { SITE } from '../lib/site';
-const { doc, title } = Astro.props as { doc: 'privacy'; title: string };
+const { doc, title } = Astro.props as { doc: 'privacy' | 'agreement'; title: string };
 ---
 <Base title={`${title} – ${SITE.name}`} description={`${title} сайта цветочного салона «${SITE.name}» (${SITE.city}).`}>
   <article class="container legal">

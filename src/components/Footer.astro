@@ -3,6 +3,7 @@ import { SITE, SOCIALS, FOOTER } from '../lib/site';
 import { u } from '../lib/url';
 import { Social } from '../islands/icons';
 const cols = [
+  { title: 'Меню', items: FOOTER.menu },
   { title: 'Каталог', items: FOOTER.catalog },
   { title: 'Покупателям', items: FOOTER.buyers },
   { title: 'Информация', items: FOOTER.info },
@@ -36,7 +37,7 @@ const cols = [
 
 <style>
   .ftr { position: relative; margin-top: 110px; background: var(--mauve); color: rgba(255,255,255,.88); overflow: hidden; }
-  .ftr__grid { display: grid; grid-template-columns: 1.4fr repeat(3, auto); gap: 40px 56px; padding-top: 64px; }
+  .ftr__grid { display: grid; grid-template-columns: 1.4fr repeat(4, auto); gap: 40px 56px; padding-top: 64px; }
   .ftr__logo img { height: 64px; width: auto; filter: brightness(0) invert(1); }
   .ftr__tag { margin-top: 12px; font-size: 13px; }
   .ftr__contacts { display: grid; gap: 4px; margin-top: 40px; font-size: 14px; }

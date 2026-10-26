@@ -1,0 +1,33 @@
+---
+// Оливковый баннер: текст слева, фото букета донора справа в рамке карточки.
+import Btn, { type BtnProps } from './Btn.astro';
+import { img } from '../lib/img';
+const { title, text, badge, image, buttons = [], id } = Astro.props as { title: string; text?: string; badge?: string; image: string; buttons?: BtnProps[]; id?: string };
+---
+<section class="section container" id={id}>
+  <div class="cta pink-card reveal">
+    <div class="cta__text">
+      {badge && <span class="badge cta__badge">✿ {badge}</span>}
+      <h2 class="h2" set:html={title.replace(/\n/g, '<br />')} />
+      {text && <p class="cta__p" set:html={text.replace(/\n/g, '<br />')} />}
+      {buttons.length > 0 && <div class="cta__btns">{buttons.map((b, i) => <Btn {...b} variant={b.variant ?? (i === 0 ? 'white' : 'outline')} flower={b.flower ?? i === 0} />)}</div>}
+    </div>
+  </div>
+  <img class="cta__img" src={img(image)} alt="" loading="lazy" />
+</section>
+<style>
+  section { position: relative; }
+  .cta { min-height: 500px; display: flex; align-items: center; padding: 56px; overflow: visible; }
+  .cta.pink-card { overflow: hidden; }
+  .cta__text { position: relative; z-index: 2; display: grid; gap: 22px; max-width: 560px; }
+  .cta__badge { justify-self: start; }
+  .cta__p { font-size: 14px; max-width: 470px; }
+  .cta__btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; }
+  .cta__img { position: absolute; z-index: 3; right: calc(var(--gutter) + 48px); top: 158px; bottom: 48px; width: min(38%, 520px); height: calc(100% - 206px); object-fit: cover; border-radius: var(--radius-l); pointer-events: none; }
+  @media (max-width: 1023px) {
+    .cta { flex-direction: column; align-items: stretch; min-height: 0; padding: 28px 20px 320px; }
+    .cta__btns { flex-direction: column; }
+    .cta__btns :global(.btn) { width: 100%; }
+    .cta__img { top: auto; left: calc(var(--gutter) + 20px); right: calc(var(--gutter) + 20px); bottom: 20px; width: auto; height: 280px; }
+  }
+</style>

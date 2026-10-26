@@ -1,44 +1,70 @@
 ---
-// Главная: структура Milovini, содержимое – с tsvetibezpovoda.ru (у донора главная = каталог).
+// Главная – блоки и порядок эталона Milovini 88c3559, содержание – донора tsvetibezpovoda.ru.
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionHead from '../components/SectionHead.astro';
-import CatalogLinks from '../components/CatalogLinks.astro';
+import PinkCta from '../components/PinkCta.astro';
+import Split from '../components/Split.astro';
+import QuizSection from '../components/QuizSection.astro';
+import Reviews from '../components/Reviews.astro';
 import DeliveryCards from '../components/DeliveryCards.astro';
+import Faq from '../components/Faq.astro';
 import FinalCta from '../components/FinalCta.astro';
 import ContactCard from '../components/ContactCard.astro';
 import Catalog from '../islands/Catalog';
-import { products, toCard, inPart, allChips, PART } from '../lib/catalog';
+import { products, toCard, inPart, allChips, PART, photo } from '../lib/catalog';
 import { SITE } from '../lib/site';
+import faq from '../data/faq.json';
 
 const all = products.filter((p) => p.price && p.images.length).map(toCard);
-const hits = products.filter((p) => inPart(p, PART.hits) && p.images.length).map(toCard);
+const popular = products.filter((p) => inPart(p, PART.hits) && p.images.length).map(toCard);
 ---
-<Base title={`Цветы с доставкой в Курске за 60 минут – ${SITE.name}`} description={`Цветочный салон «${SITE.name}» в Курске: ${all.length} букетов – сборные, монобукеты, композиции, премиум. Доставка за 60 минут, открытка и средство по уходу в подарок.`}>
+<Base title={`Доставка цветов в Курске за 60 минут – ${SITE.name}`} description={`Доставим цветы по Курску за 60 минут. ${all.length} букетов – сборные, монобукеты, композиции, премиум. Открытка и средство по уходу в подарок, бесплатная доставка от 4 000 ₽.`}>
   <PageHero
-    badge="Цветочный салон в Курске"
-    title="Цветы без повода"
+    badge="Доставка за 60 минут"
+    title="Доставим свежие цветы по Курску"
     accent="за 60 минут"
-    text={`Сборные букеты, монобукеты, композиции и премиум-букеты с доставкой по Курску. К каждому заказу – открытка и средство по уходу за букетом в подарок.`}
-    image={products[1].images[0]}
-    buttons={[{ label: 'Выбрать букет', href: '/#catalog' }, { label: 'Помогите выбрать', lead: true }]}
+    text="Соберём букет для важного повода или просто без повода. Доставим по Курску в течение 60 минут после оплаты, а открытку и средство по уходу за букетом положим в подарок."
+    image={photo(1)}
+    buttons={[{ label: 'Выбрать букет', href: '/#catalog' }, { label: 'Помогите выбрать', href: '/#Quiz' }]}
     features
   />
 
   <section class="section container" id="catalog">
-    <SectionHead title="Каталог букетов" action={{ label: 'Смотреть весь каталог', href: '/catalog', variant: 'outline' }} />
-    <CatalogLinks />
+    <SectionHead title="Каталог" action={{ label: 'Смотреть весь каталог', href: '/catalog', variant: 'pink', flower: true }} />
     <Catalog client:visible cards={all} chips={allChips()} step={12} />
   </section>
 
-  {hits.length > 0 && (
-    <section class="section container">
-      <SectionHead title="Хиты" sub="Букеты, которые выбирают чаще всего" action={{ label: 'Все хиты', href: '/catalog/hity', variant: 'outline' }} />
-      <Catalog client:visible cards={hits} step={8} prices={false} sort={false} />
-    </section>
-  )}
+  <PinkCta
+    badge="Гарантии"
+    title="За что мы отвечаем в каждом заказе"
+    text="Когда вы заказываете цветы для близкого человека, важно быть уверенным не только в том, как будет выглядеть букет, но и в том, как он будет собран и доставлен."
+    image={photo(7)}
+    buttons={[{ label: 'Подробнее', href: '/garantii' }, { label: 'Помогите выбрать', href: '/#Quiz' }]}
+  />
 
+  <Split
+    id="preim"
+    title="Почему «Цветы без повода» выбирают снова и снова"
+    image={photo(8)}
+    html={`<p>Когда хочется порадовать близкого человека, важно не просто заказать цветы – хочется быть уверенным, что всё получится именно так, как вы задумали.</p>
+<p>«Цветы без повода» – цветочный салон в Курске на ул. Ленина, 74. Собираем сборные букеты, монобукеты, композиции и премиум-букеты, а доставляем своей курьерской службой – в течение 60 минут с момента оплаты.</p>
+<p>К каждому заказу кладём в подарок открытку и средство по уходу за букетом. При заказе от 4 000 ₽ доставка по Курску бесплатная.</p>
+<p>Наш рейтинг на Яндекс Картах – <b>5,0</b>.</p>`}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }]}
+    social
+  />
+
+  <QuizSection />
+
+  <section class="section container">
+    <SectionHead title="Букеты, которые выбирают чаще всего" sub="Хиты салона «Цветы без повода»" action={{ label: 'Помогите выбрать', href: '/#Quiz' }} />
+    <Catalog client:visible cards={popular} step={8} prices={false} sort={false} />
+  </section>
+
+  <Reviews />
   <DeliveryCards />
+  <Faq items={faq.home} />
   <FinalCta />
   <ContactCard />
 </Base>

@@ -146,3 +146,6 @@ textarea.input { height: auto; min-height: 110px; padding: 14px 18px; resize: ve
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.4; cursor: pointer; }
 .check input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--mauve); flex: none; }
 .check a { text-decoration: underline; }
+
+/* Кружок с номером или галочкой вместо иконки (иконок у донора нет) */
+.num-badge { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--mauve); color: var(--cream); font: 500 18px/1 var(--head-font); }

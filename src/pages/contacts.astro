@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import ContactCard from '../components/ContactCard.astro';
+import QuizSection from '../components/QuizSection.astro';
 import FinalCta from '../components/FinalCta.astro';
 import { SITE } from '../lib/site';
 import { products } from '../lib/catalog';
@@ -13,15 +14,15 @@ const ld = {
 ---
 <Base title={`Контакты – ${SITE.name}, ${SITE.city}, ${SITE.address}`} description={`${SITE.name}: ${SITE.city}, ${SITE.address}. Телефон ${SITE.phone}, ${SITE.hours.toLowerCase()}. ВКонтакте, Telegram, WhatsApp.`}>
   <PageHero
-    small
     crumbs={[{ label: 'Главная', href: '/' }, { label: 'Контакты' }]}
-    title="Контакты"
-    text={`${SITE.city}, ${SITE.address}\n${SITE.hours}\n${SITE.phone}`}
+    title="Контакты «Цветы без повода»"
+    text={`Свяжитесь с нами, чтобы оформить заказ, уточнить условия доставки или получить помощь с выбором цветов.\nСтудия: ${SITE.city}, ${SITE.address}, ${SITE.hours.toLowerCase()}.`}
     image={products[4].images[0]}
     buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
     facts={[SITE.owner, `ИНН ${SITE.inn} / ОГРНИП ${SITE.ogrnip}`]}
   />
   <ContactCard />
+  <QuizSection />
   <FinalCta />
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
 </Base>

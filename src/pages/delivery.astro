@@ -1,49 +1,73 @@
 ---
-// Доставка и оплата – тексты со страницы /delivery донора (27.10.2026).
+// Доставка и оплата – блоки эталона Milovini 88c3559, условия – со страницы /delivery донора.
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import ListCards from '../components/ListCards.astro';
 import SectionHead from '../components/SectionHead.astro';
+import Faq from '../components/Faq.astro';
 import FinalCta from '../components/FinalCta.astro';
 import ContactCard from '../components/ContactCard.astro';
+import { IconFlower } from '../islands/icons';
 import { DELIVERY_FROM, FREE_FROM } from '../lib/delivery';
 import { SITE } from '../lib/site';
-import { products } from '../lib/catalog';
+import { photo } from '../lib/catalog';
+import faq from '../data/faq.json';
 const n = (x: number) => x.toLocaleString('ru-RU');
 const cards = [
-  { title: 'Условия доставки', items: ['Доставка осуществляется ежедневно с 10:00 до 00:00.', 'Время доставки по Курску – в течение 60 минут с момента оплаты заказа. Заказы в удалённые районы могут занимать больше времени.'] },
-  { title: 'Стоимость доставки', items: ['Доставка осуществляется личной курьерской службой.', `Стоимость доставки по Курску – от ${n(DELIVERY_FROM)} ₽, рассчитывается индивидуально в зависимости от района доставки.`, `Бесплатная доставка по Курску при заказе от ${n(FREE_FROM)} ₽.`] },
-  { title: 'Способы оплаты', items: ['Наличными при самовывозе в нашей студии.', 'Переводом после подтверждения заказа.'] },
+  { title: 'Ежедневно с 10:00 до 00:00', html: '<p>Время доставки по Курску – в течение 60 минут с момента оплаты заказа.</p><p>Заказы в удалённые районы могут занимать больше времени.</p>' },
+  { title: `От ${n(DELIVERY_FROM)} ₽`, html: `<p>Доставка осуществляется личной курьерской службой.</p><p>Стоимость доставки по Курску от ${n(DELIVERY_FROM)} ₽ рассчитывается индивидуально в зависимости от района доставки.</p>` },
+  { title: `Бесплатно от ${n(FREE_FROM)} ₽`, html: `<p>Бесплатная доставка по Курску при заказе от ${n(FREE_FROM)} ₽.</p>` },
+  { title: 'Самовывоз', html: `<p>Забрать заказ можно в нашей студии. Оплатить при самовывозе можно наличными.</p><p><b>Адрес</b><br />${SITE.city}, ${SITE.address}<br />${SITE.hours}</p>` },
 ];
 ---
-<Base title={`Доставка и оплата цветов в Курске – ${SITE.name}`} description={`Доставка цветов по Курску ежедневно с 10:00 до 00:00 за 60 минут после оплаты. От ${n(DELIVERY_FROM)} ₽, бесплатно от ${n(FREE_FROM)} ₽. Оплата переводом или наличными при самовывозе.`}>
+<Base title={`Доставка и оплата цветов в Курске – ${SITE.name}`} description={`Доставка цветов по Курску ежедневно с 10:00 до 00:00 за 60 минут после оплаты. От ${n(DELIVERY_FROM)} ₽, бесплатно от ${n(FREE_FROM)} ₽, самовывоз с ул. Ленина, 74. Оплата переводом или наличными при самовывозе.`}>
   <PageHero
-    small
     crumbs={[{ label: 'Главная', href: '/' }, { label: 'Доставка и оплата' }]}
-    title="Доставка и оплата"
-    text={`Доставляем по Курску ежедневно с 10:00 до 00:00 – в течение 60 минут с момента оплаты. Бесплатно при заказе от ${n(FREE_FROM)} ₽.`}
-    image={products[3].images[0]}
+    title="Доставка и оплата цветов в Курске"
+    text={`Доставляем по Курску ежедневно с 10:00 до 00:00 – в течение 60 минут с момента оплаты. При заказе от ${n(FREE_FROM)} ₽ доставка бесплатная.`}
+    image={photo(3)}
     buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+    features
+  />
+  <ListCards
+    title="Как можно оплатить заказ"
+    text={`Если у вас возникли вопросы по оплате или доставке, позвоните: ${SITE.phone}`}
+    items={[
+      { title: 'Переводом', text: 'После подтверждения заказа.', image: photo(10) },
+      { title: 'Наличными', text: 'При самовывозе в нашей студии.', image: photo(11) },
+    ]}
   />
   <section class="section container">
-    <SectionHead title="Условия" sub={`Остались вопросы по доставке – позвоните: ${SITE.phone}`} />
+    <SectionHead title="Условия и стоимость доставки" sub="Доставку выполняет наша курьерская служба" />
     <div class="dt">
       {cards.map((c) => (
         <article class="dt__card">
           <h3 class="h3">{c.title}</h3>
-          <ul>{c.items.map((i) => <li>{i}</li>)}</ul>
+          <div class="dt__html" set:html={c.html} />
+          <button type="button" class="btn btn--pink btn--sm" data-lead>Заказать букет <IconFlower size={16} /></button>
         </article>
       ))}
+      <article class="dt__card dt__card--pink pink-card">
+        <h3 class="h3">Подарки к каждому заказу</h3>
+        <p>К каждому букету прикладываем открытку и средство по уходу за букетом.</p>
+        <button type="button" class="btn btn--white btn--sm" data-lead>Заказать букет <IconFlower size={16} /></button>
+      </article>
     </div>
   </section>
+  <Faq items={faq.delivery} />
   <FinalCta />
   <ContactCard />
 </Base>
 <style>
   .dt { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .dt__card { display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid var(--mauve); border-radius: var(--radius-l); font-size: 15px; }
-  .dt__card ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: var(--ink); }
+  .dt__card { display: flex; flex-direction: column; gap: 12px; padding: 28px; border: 1px solid var(--mauve); border-radius: var(--radius-l); font-size: 14px; min-height: 300px; }
+  .dt__html { display: grid; gap: 8px; }
+  .dt__card :global(b) { color: var(--ink); }
+  .dt__card .btn { margin-top: auto; }
+  .dt__card--pink { border: 0; }
   @media (max-width: 1023px) {
     .dt { grid-template-columns: 1fr; gap: 10px; }
-    .dt__card { padding: 20px; }
+    .dt__card { min-height: 0; padding: 20px; }
+    .dt__card .btn { margin-top: 8px; }
   }
 </style>

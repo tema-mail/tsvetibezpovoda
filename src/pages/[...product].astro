@@ -3,6 +3,7 @@
 import Base from '../layouts/Base.astro';
 import Crumbs from '../components/Crumbs.astro';
 import SectionHead from '../components/SectionHead.astro';
+import Reviews from '../components/Reviews.astro';
 import ProductBuy from '../islands/ProductBuy';
 import Catalog from '../islands/Catalog';
 import { products, toCard, partById, addonParts, inPart, rub, type Product } from '../lib/catalog';
@@ -69,7 +70,7 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
           <li><b>Доставка за 60 минут</b><span>По Курску с момента оплаты, ежедневно с 10:00 до 00:00</span></li>
           <li><b>Бесплатно от {FREE_FROM.toLocaleString('ru-RU')} ₽</b><span>Доставка по Курску – от 250 ₽ в зависимости от района</span></li>
           <li><b>Открытка в подарок</b><span>И средство по уходу за букетом к каждому заказу</span></li>
-          <li><b>Скидки постоянным</b><span>Бонусная система и скидки постоянным клиентам</span></li>
+          <li><b>Рейтинг 5,0</b><span>Так нас оценивают на Яндекс Картах</span></li>
         </ul>
         {p.text && (
           <div class="pp__text">
@@ -94,6 +95,7 @@ const buy = { id: p.id, title: p.title, price: p.price!, img: p.images[0], path:
       <Catalog client:visible cards={similar} step={8} prices={false} sort={false} />
     </section>
   )}
+  <Reviews id="reviews" />
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
 </Base>
 

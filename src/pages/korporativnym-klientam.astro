@@ -1,0 +1,83 @@
+---
+// Корпоративным клиентам – блоки эталона Milovini 88c3559 (corparate). У донора такой страницы нет:
+// тексты шаблона переписаны под «Цветы без повода», Курск и условия донора; всё – в «Подтвердить у клиента».
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CategoryTiles from '../components/CategoryTiles.astro';
+import ListCards from '../components/ListCards.astro';
+import Steps from '../components/Steps.astro';
+import FeatureList from '../components/FeatureList.astro';
+import PinkCta from '../components/PinkCta.astro';
+import Split from '../components/Split.astro';
+import Reviews from '../components/Reviews.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+import ContactCard from '../components/ContactCard.astro';
+import CorpForm from '../islands/CorpForm';
+import { SITE } from '../lib/site';
+import { photo } from '../lib/catalog';
+import { u } from '../lib/url';
+import faq from '../data/faq.json';
+---
+<Base title={`Цветы для компаний и организаций в Курске – ${SITE.name}`} description="Корпоративные заказы цветов в Курске: букеты для сотрудников, клиентов и партнёров, заказы к праздникам и доставка по нескольким адресам. Доставка за 60 минут, открытка и средство по уходу в подарок.">
+  <PageHero
+    crumbs={[{ label: 'Главная', href: '/' }, { label: 'Корпоративным клиентам' }]}
+    title="Цветы для компаний и организаций в Курске"
+    text={'Подберём цветы под задачу вашей компании, подготовим заказ и организуем доставку по Курску.\nОставьте заявку – обсудим количество букетов, даты и адреса.'}
+    image={photo(16)}
+    buttons={[{ label: 'Обсудить сотрудничество', href: '/korporativnym-klientam#form' }]}
+    features
+  />
+  <CategoryTiles title="Цветы для задач вашей компании" sub="Заказывайте букеты и композиции для сотрудников, клиентов, партнёров и корпоративных событий. В каталоге доступны:" limit={8} />
+  <ListCards
+    title="Для каких задач заказывают цветы"
+    text="Подберём цветы под задачу вашей компании, подготовим заказ и организуем доставку по Курску. Доставка работает ежедневно с 10:00 до 00:00."
+    items={[
+      { title: 'Поздравить сотрудников', text: 'Цветы к личным и праздничным датам.', image: photo(17) },
+      { title: 'Поздравить клиентов и партнёров', text: 'Букеты и композиции для деловых поздравлений.', image: photo(18) },
+      { title: 'Подготовить заказ к празднику', text: 'Цветы для корпоративных поздравлений к календарным и сезонным датам.', image: photo(19) },
+      { title: 'Организовать несколько доставок', text: 'Если нужно подготовить цветы для нескольких получателей, обсудим заказ и доставку заранее.', image: photo(20) },
+    ]}
+  />
+  <Steps
+    title="Как проходит заказ"
+    sub="Доставляем по Курску ежедневно с 10:00 до 00:00 своей курьерской службой."
+    items={[
+      { title: 'Расскажите, что нужно', text: 'Укажите количество получателей, повод, дату и пожелания к цветам.' },
+      { title: 'Подберём подходящие варианты', text: 'Поможем выбрать букеты или композиции под задачу и бюджет.' },
+      { title: 'Подготовим заказ', text: 'Соберём цветы к согласованной дате.' },
+      { title: 'Подтвердим заказ', text: 'Согласуем состав, сумму и оплату переводом.' },
+      { title: 'Организуем доставку', text: 'Доставим заказы по указанным адресам в Курске.' },
+    ]}
+  />
+  <FeatureList
+    title={'Всё необходимое\nдля заказа в одном месте'}
+    image={photo(21)}
+    items={[
+      { title: 'Разные форматы цветов', text: 'Сборные букеты, монобукеты, композиции и премиум-букеты.' },
+      { title: 'Своя курьерская служба', text: 'Доставка по Курску – в течение 60 минут с момента оплаты.' },
+      { title: 'Подарки к заказу', text: 'К каждому букету – открытка и средство по уходу.' },
+      { title: 'Бесплатная доставка от 4 000 ₽', text: 'При меньшей сумме – от 250 ₽ в зависимости от района.' },
+      { title: 'Оплата переводом', text: 'После подтверждения заказа.' },
+    ]}
+  />
+  <PinkCta
+    title="Для компаний, которые заказывают цветы регулярно"
+    text={'Если вашей компании регулярно нужны цветы для сотрудников, клиентов, партнёров или мероприятий, оставьте заявку. Обсудим ваши задачи и формат сотрудничества.'}
+    image={photo(22)}
+    buttons={[{ label: 'Оставить заявку', href: '/korporativnym-klientam#form' }, { label: 'Выбрать букет', href: '/catalog' }]}
+  />
+  <Split
+    title="Подготовьте цветы заранее"
+    image={photo(23)}
+    html={`<p>Для корпоративных заказов особенно важно заранее определить:</p><ul><li>количество получателей;</li><li>дату;</li><li>формат цветов;</li><li>бюджет;</li><li>адреса доставки.</li></ul><p>Заказы к 8 Марта, 1 сентября и другим календарным датам лучше обсудить заранее – подготовим их к нужному дню.</p>`}
+    buttons={[{ label: 'Оставить заявку', href: '/korporativnym-klientam#form' }, { label: 'Помогите выбрать', lead: true }]}
+  />
+  <section class="section container" id="form">
+    <CorpForm client:visible image={u(photo(24) + '-1000.webp')} />
+  </section>
+  <Reviews id="reviews" />
+  <Faq items={faq.corparate} />
+  <FinalCta />
+  <ContactCard />
+</Base>

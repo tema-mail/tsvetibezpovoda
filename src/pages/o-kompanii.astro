@@ -1,0 +1,60 @@
+---
+// О компании – блоки эталона Milovini 88c3559 (about), факты донора; шаблонные места – в docs/karta-sayta.md.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Split from '../components/Split.astro';
+import IconCards from '../components/IconCards.astro';
+import CategoryTiles from '../components/CategoryTiles.astro';
+import PinkCta from '../components/PinkCta.astro';
+import DeliveryCards from '../components/DeliveryCards.astro';
+import Reviews from '../components/Reviews.astro';
+import FinalCta from '../components/FinalCta.astro';
+import ContactCard from '../components/ContactCard.astro';
+import { SITE } from '../lib/site';
+import { photo } from '../lib/catalog';
+---
+<Base title={`О компании «${SITE.name}» – цветы с доставкой по Курску`} description={`«${SITE.name}» – цветочный салон в Курске на ул. Ленина, 74: сборные букеты, монобукеты, композиции и премиум-букеты, доставка за 60 минут, открытка и средство по уходу в подарок.`}>
+  <PageHero
+    crumbs={[{ label: 'Главная', href: '/' }, { label: 'О компании' }]}
+    title="«Цветы без повода» – цветы с доставкой по Курску"
+    text="Собираем букеты и композиции для важных событий, тёплых встреч и моментов, когда хочется порадовать близкого человека без особого повода."
+    image={photo(12)}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+    features
+  />
+  <Split
+    reverse
+    title="Цветы, к которым относимся с вниманием"
+    image={photo(13)}
+    html={`<p>«${SITE.name}» – цветочный салон в Курске. Наша студия – на ул. Ленина, 74, открыта ежедневно с 10:00 до 22:00.</p><p>В каталоге – сборные букеты, монобукеты, композиции и премиум-букеты. Хиты и акции собраны в отдельные разделы, чтобы выбрать было проще.</p>`}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+  />
+  <IconCards
+    center
+    title="От выбора цветов до момента вручения"
+    sub="Для нас заказ – это не только готовый букет. Важно, чтобы вы были уверены в результате на каждом этапе"
+    items={[
+      { title: 'Помощь с выбором', text: 'Подскажем букет под получателя, повод и бюджет – по телефону или в мессенджере.' },
+      { title: 'Своя курьерская служба', text: 'Доставляем по Курску в течение 60 минут с момента оплаты.' },
+      { title: 'Подарки к заказу', text: 'К каждому букету – открытка и средство по уходу.' },
+      { title: 'Удобная оплата', text: 'Переводом после подтверждения заказа или наличными при самовывозе.' },
+    ]}
+  />
+  <CategoryTiles title="Что можно заказать" sub="Сборные букеты, монобукеты, композиции, премиум, розы и хризантемы" scroll />
+  <PinkCta
+    title="Чтобы букет радовал дольше"
+    text="К каждому заказу прикладываем средство по уходу за букетом – оно помогает цветам дольше сохранять свежесть."
+    image={photo(14)}
+    buttons={[{ label: 'Подробнее', href: '/garantii' }, { label: 'Помогите выбрать', lead: true }]}
+  />
+  <DeliveryCards />
+  <Split
+    title="Нам доверяют цветы для важных моментов"
+    image={photo(15)}
+    html={`<p><b>Доставка за 60 минут</b><br />По Курску – с момента оплаты, ежедневно с 10:00 до 00:00.</p><p><b>Бесплатная доставка от 4 000 ₽</b><br />При меньшей сумме – от 250 ₽ в зависимости от района.</p><p><b>Открытка и средство по уходу</b><br />В подарок к каждому заказу.</p><p><b>Рейтинг 5,0</b><br />Так нас оценивают покупатели на Яндекс Картах.</p>`}
+    buttons={[{ label: 'Смотреть каталог', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+  />
+  <Reviews id="reviews" />
+  <FinalCta />
+  <ContactCard />
+</Base>

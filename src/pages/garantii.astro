@@ -1,0 +1,66 @@
+---
+// Гарантии – блоки эталона Milovini 88c3559 (garantee). У донора такой страницы нет: срок гарантии не заявлен,
+// поэтому без «48 часов» – только факты донора; всё – в «Подтвердить у клиента».
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import PhotoStrip from '../components/PhotoStrip.astro';
+import IconCards from '../components/IconCards.astro';
+import PinkCta from '../components/PinkCta.astro';
+import Split from '../components/Split.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+import ContactCard from '../components/ContactCard.astro';
+import { SITE } from '../lib/site';
+import { photo } from '../lib/catalog';
+import faq from '../data/faq.json';
+---
+<Base title={`Гарантии и качество цветов – ${SITE.name}`} description="Как мы отвечаем за заказ: своя курьерская служба, доставка по Курску за 60 минут, средство по уходу за букетом к каждому заказу.">
+  <PageHero
+    crumbs={[{ label: 'Главная', href: '/' }, { label: 'Гарантии' }]}
+    title="Гарантии «Цветы без повода»"
+    text="Мы уделяем внимание не только тому, как выглядит букет при сборке, но и каждому этапу до его передачи получателю."
+    image={photo(25)}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }, { label: 'Помогите выбрать', lead: true }]}
+    features
+  />
+  <PhotoStrip
+    title="Отвечаем за качество цветов"
+    sub="Букеты и композиции из нашего каталога"
+    images={[photo(26), photo(27), photo(28), photo(29), photo(30), photo(31)]}
+  />
+  <IconCards
+    title="От цветов до готового букета"
+    sub="Для нас важно, чтобы заказ радовал не только в момент вручения."
+    items={[
+      { title: 'Помощь с выбором', text: 'Подскажем букет под получателя, повод и бюджет.', image: photo(32) },
+      { title: 'Подтверждение заказа', text: 'Менеджер свяжется с вами, подтвердит состав и сумму до оплаты.', image: photo(33) },
+      { title: 'Своя курьерская служба', text: 'Доставляем по Курску в течение 60 минут с момента оплаты.', image: photo(34) },
+      { title: 'Средство по уходу', text: 'Прикладываем к каждому заказу вместе с открыткой.', image: photo(35) },
+    ]}
+  />
+  <PinkCta
+    title="Помогаем сохранить свежесть цветов дольше"
+    text="К каждому заказу прикладываем средство по уходу за букетом. Оно помогает дольше сохранить внешний вид цветов после доставки."
+    image={photo(36)}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog' }]}
+  />
+  <Split
+    title="Правильный уход начинается сразу после доставки"
+    image={photo(37)}
+    html={`<p>После получения цветов важно:</p><ul><li>использовать средство по уходу, которое мы прикладываем к заказу;</li><li>поставить букет в чистую воду в прохладное место;</li><li>учитывать особенности конкретного букета или композиции.</li></ul><p>Если у вас появились вопросы по состоянию цветов, свяжитесь с нами: ${SITE.phone}.</p>`}
+    social
+  />
+  <IconCards
+    center
+    title="Почему можно быть спокойным за заказ"
+    items={[
+      { title: 'Доставка за 60 минут', text: 'По Курску – с момента оплаты, ежедневно с 10:00 до 00:00.' },
+      { title: 'Подтверждение до оплаты', text: 'Оплата переводом – только после подтверждения заказа.' },
+      { title: 'Своя курьерская служба', text: 'Доставку выполняет наша личная курьерская служба.' },
+      { title: 'Рейтинг 5,0', text: 'Так нас оценивают покупатели на Яндекс Картах.' },
+    ]}
+  />
+  <Faq items={faq.garantee} />
+  <FinalCta />
+  <ContactCard />
+</Base>

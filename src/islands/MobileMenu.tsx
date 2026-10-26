@@ -10,8 +10,13 @@ import { IconArrow, IconChevron, IconClose, IconFlower, IconPhone, IconSearch, S
 // раздел раскрывается в подразделы; внизу всегда закреплена «Заказать букет».
 
 const LINKS = [
-  { label: 'Весь каталог', href: '/catalog' },
+  { label: 'Каталог цветов', href: '/catalog' },
+  { label: 'Акции', href: '/akcii' },
+  { label: 'Корпоративным клиентам', href: '/korporativnym-klientam' },
   { label: 'Доставка и оплата', href: '/delivery' },
+  { label: 'Гарантии', href: '/garantii' },
+  { label: 'Отзывы', href: '/#rev' },
+  { label: 'О компании', href: '/o-kompanii' },
   { label: 'Контакты', href: '/contacts' },
 ];
 

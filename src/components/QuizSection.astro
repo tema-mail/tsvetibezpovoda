@@ -1,0 +1,9 @@
+---
+// Квиз подбора букета (фото – букет донора). id="Quiz" – на него ведут кнопки «Помогите выбрать» (/#Quiz).
+import Quiz from '../islands/Quiz';
+import { u } from '../lib/url';
+import { photo } from '../lib/catalog';
+---
+<section class="section container" id="Quiz">
+  <Quiz client:visible image={u(photo(9) + '-1000.webp')} />
+</section>

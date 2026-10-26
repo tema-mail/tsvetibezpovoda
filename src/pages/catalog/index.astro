@@ -1,34 +1,51 @@
 ---
+// Общий каталог – блоки эталона Milovini 88c3559, товары и условия донора.
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import CatalogLinks from '../../components/CatalogLinks.astro';
-import DeliveryCards from '../../components/DeliveryCards.astro';
+import QuizSection from '../../components/QuizSection.astro';
+import IconCards from '../../components/IconCards.astro';
+import Faq from '../../components/Faq.astro';
 import FinalCta from '../../components/FinalCta.astro';
 import ContactCard from '../../components/ContactCard.astro';
 import Catalog from '../../islands/Catalog';
-import { products, toCard, allChips } from '../../lib/catalog';
+import { products, toCard, inPart, allChips, PART, photo } from '../../lib/catalog';
 import { SITE } from '../../lib/site';
+import faq from '../../data/faq.json';
 
 const all = products.filter((p) => p.price && p.images.length).map(toCard);
-const min = Math.min(...all.map((x) => x.price));
+const popular = products.filter((p) => inPart(p, PART.hits) && p.images.length).map(toCard);
 ---
-<Base title={`Каталог букетов с доставкой по Курску – ${SITE.name}`} description={`Каталог «${SITE.name}»: ${all.length} букетов от ${min.toLocaleString('ru-RU')} ₽ – сборные, монобукеты, композиции, премиум, розы и хризантемы. Доставка по Курску за 60 минут.`}>
+<Base title={`Каталог цветов и букетов с доставкой по Курску – ${SITE.name}`} description={`Каталог «${SITE.name}»: ${all.length} букетов – сборные, монобукеты, композиции, премиум, розы и хризантемы. Доставка по Курску за 60 минут, открытка и средство по уходу в подарок.`}>
   <PageHero
-    small
     crumbs={[{ label: 'Главная', href: '/' }, { label: 'Каталог' }]}
-    title="Каталог букетов"
-    text="Сборные букеты, монобукеты, композиции, премиум, хиты и акции. Доставим по Курску за 60 минут, открытка и средство по уходу – в подарок."
-    image={products[5].images[0]}
-    buttons={[{ label: 'Выбрать букет', href: '/catalog#list' }, { label: 'Помогите выбрать', lead: true }]}
+    title="Каталог цветов и букетов «Цветы без повода» в Курске"
+    text="Выберите готовый букет или композицию с доставкой по Курску. В каталоге – сборные букеты, монобукеты, композиции и премиум-букеты. Доставим за 60 минут после оплаты."
+    image={photo(5)}
+    buttons={[{ label: 'Выбрать букет', href: '/catalog#list' }, { label: 'Помогите выбрать', href: '/catalog#Quiz' }]}
     features
   />
   <section class="section container" id="list">
-    <SectionHead title="Все букеты" sub={`${all.length} букетов от ${min.toLocaleString('ru-RU')} ₽`} />
+    <SectionHead title="Каталог" sub={`${all.length} букетов и композиций`} />
     <CatalogLinks />
     <Catalog client:load cards={all} chips={allChips()} step={16} />
   </section>
-  <DeliveryCards />
+  <section class="section container">
+    <SectionHead title="Букеты, которые выбирают чаще всего" sub="Хиты салона «Цветы без повода» с доставкой по Курску" />
+    <Catalog client:visible cards={popular} step={8} prices={false} sort={false} />
+  </section>
+  <QuizSection />
+  <IconCards
+    title="Почему выбирают «Цветы без повода»" center
+    items={[
+      { title: 'Доставка за 60 минут', text: 'По Курску – в течение 60 минут с момента оплаты, ежедневно с 10:00 до 00:00.' },
+      { title: 'Подарки к заказу', text: 'К каждому букету – открытка и средство по уходу.' },
+      { title: 'Бесплатно от 4 000 ₽', text: 'При заказе от 4 000 ₽ доставка по Курску бесплатная.' },
+      { title: 'Рейтинг 5,0', text: 'Так нас оценивают покупатели на Яндекс Картах.' },
+    ]}
+  />
+  <Faq items={faq.catalog} />
   <FinalCta />
   <ContactCard />
 </Base>

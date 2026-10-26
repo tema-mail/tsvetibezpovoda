@@ -89,3 +89,7 @@ export function catalogCards(part: string): Card[] {
     .filter((p) => p.images.length && p.price && inPart(p, part))
     .map(toCard);
 }
+
+/** Фото букета донора для блоков страниц (первые экраны, баннеры): n-й товар с фото. */
+const withImg = products.filter((p) => p.images.length);
+export const photo = (n: number): string => withImg[n % withImg.length].images[0];
