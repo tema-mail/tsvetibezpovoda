@@ -1,0 +1,19 @@
+---
+/** Админка → Заявки (остров Leads; доска – эталон ALEX KROWN / EV, перенос с Milovini 7f97294). Своего приёмника нет –
+    пример подписан «Пример:» и взят с настоящих форм этого сайта: «Оформление заказа» (корзина, islands/Order.tsx),
+    «Квиз: подбор букета» (islands/Quiz.tsx), «Помочь с выбором букета» (islands/LeadPopup.tsx), «Корпоративный заказ»
+    (islands/CorpForm.tsx). Товары – реальные позиции каталога донора, категория – раздел каталога. */
+import Admin from '../../layouts/Admin.astro';
+import Leads, { type Lead } from '../../islands/admin/Leads';
+const at = (d: number, h: number) => new Date(Date.UTC(2026, 9, d, h)).toISOString();
+const sample: Lead[] = [
+  { id: 'TB-1027-01', createdAt: at(27, 7), name: 'Пример: Анна', phone: '+7 900 000-00-21', form: 'Оформление заказа', page: '/order/', stage: 'новая', source: 'Поиск Яндекса', message: 'Доставка сегодня 17:00–18:00, ул. Ленина, открытка «С днём рождения!», оплата переводом', items: [{ uid: '394357568422', title: 'Розовая мечта', category: 'Сборные букеты', qty: 1, price: 6900 }], category: 'Сборные букеты' },
+  { id: 'TB-1026-02', createdAt: at(26, 12), name: 'Пример: Игорь', phone: '+7 900 000-00-22', form: 'Оформление заказа', page: '/order/', stage: 'в работе', source: 'Прямые заходы', message: 'Самовывоз завтра, наличными', items: [{ uid: '318608023542', title: 'Мэри', category: 'Монобукеты', qty: 1, price: 4000 }, { uid: '507574232722', title: 'Летний комплимент', category: 'Монобукеты', qty: 1, price: 2000 }], category: 'Монобукеты' },
+  { id: 'TB-1026-03', createdAt: at(26, 9), name: 'Пример: Ольга', phone: '+7 900 000-00-23', form: 'Квиз: подбор букета', page: '/', stage: 'новая', source: 'Соцсети', message: 'Кому: маме · Повод: день рождения · Бюджет: 3000–5000 ₽ · Доставка: завтра', items: [], category: '' },
+  { id: 'TB-1025-04', createdAt: at(25, 10), name: 'Пример: Мария', phone: '+7 900 000-00-24', form: 'Помочь с выбором букета', page: '/catalog/hity/', stage: 'выполнена', source: 'Поиск Google', items: [{ uid: '303350651382', title: 'Ромашковое облако', category: 'Хиты', qty: 1, price: 4500 }], category: 'Хиты' },
+  { id: 'TB-1024-05', createdAt: at(24, 8), name: 'Пример: ООО «Ромашка»', phone: '+7 900 000-00-25', form: 'Корпоративный заказ', page: '/korporativnym-klientam/', stage: 'отказ', source: 'Прямые заходы', message: '8 Марта, 25 букетов, 3 адреса', items: [], category: '' },
+];
+---
+<Admin title="Заявки" active="leads">
+  <Leads client:load leads={[]} sample={sample} />
+</Admin>
