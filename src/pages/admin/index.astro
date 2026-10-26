@@ -1,0 +1,126 @@
+---
+// Страницы сайта по сущностям (перенос с Milovini a2ba3f0, эталон – Elite Rose): Главная, Каталоги (раскрываются –
+// внутри карточки товара; товар из нескольких каталогов показан в каждом, считается один раз), Внутренние,
+// Юридические, Технические. Блога у сайта нет. Стадия 1: только список, без карточки страницы (владелец 27.10.2026).
+// Группы сворачиваются, состояние – в localStorage (правило владельца 24.10.2026, references/etalony.md admin-builder).
+import Admin from '../../layouts/Admin.astro';
+import { products, type Product } from '../../lib/catalog';
+import { CATALOGS } from '../../lib/site';
+import { u } from '../../lib/url';
+
+const site = (p: string) => new URL(u(p), Astro.site).href;
+const live = products.filter((p) => p.price && p.images.length);
+const inCatalog = (part: string) => live.filter((p) => p.parts.includes(part));
+const inner = [
+  { name: 'О компании', path: '/o-kompanii' }, { name: 'Акции', path: '/akcii' },
+  { name: 'Корпоративным клиентам', path: '/korporativnym-klientam' }, { name: 'Гарантии', path: '/garantii' },
+  { name: 'Доставка и оплата', path: '/delivery' }, { name: 'Контакты', path: '/contacts' },
+];
+const legal = [{ name: 'Политика конфиденциальности', path: '/privacy' }, { name: 'Пользовательское соглашение', path: '/soglashenie' }, { name: 'Реквизиты', path: '/rekvizity' }];
+const tech = [{ name: 'Оформление заказа', path: '/order' }, { name: 'Избранное', path: '/favorites' }, { name: 'Спасибо', path: '/thanks' }, { name: 'Карта сайта', path: '/karta-sayta' }, { name: 'Страница не найдена', path: '/404' }];
+// Страниц на сайте: главная + общий каталог + страницы-каталоги + карточки + внутренние + юридические + технические
+const total = 1 + 1 + CATALOGS.length + live.length + inner.length + legal.length + tech.length;
+const thumb = (p: Product) => u(p.images[0] + '-480.webp');
+const rub = (n: number | null) => (n ?? 0).toLocaleString('ru-RU') + ' ₽';
+---
+<Admin title="Страницы сайта" active="pages">
+  <div class="tools">
+    <h1>Страницы сайта</h1>
+    <span class="muted">{total} страниц · из них {live.length} карточек товара</span>
+    <a class="btn" href={u('/')} target="_blank">Открыть сайт ↗</a>
+  </div>
+  <div class="pages">
+    <div class="phead"><span></span><span>Страница</span><span>Адрес</span><span style="text-align:right">Сущность</span></div>
+
+    <section class="pgsec" data-g="home">
+      <button type="button" class="pgroup"><i class="caret"></i>Главная <span>1</span></button>
+      <div class="pgbody">
+        <div class="prow">
+          <img class="thumb" src={thumb(live[1])} alt="" loading="lazy" />
+          <div><span class="pname">Главная</span><div class="muted" style="font-size:12px">Доставка цветов в Курске за 60 минут – Цветы без повода</div></div>
+          <a class="purl" href={u('/')} target="_blank">{site('/')}</a>
+          <span class="pkind">Главная</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="pgsec" data-g="catalogs">
+      <button type="button" class="pgroup"><i class="caret"></i>Каталоги <span>{1 + CATALOGS.length} · {live.length} карточек товара</span></button>
+      <div class="pgbody">
+        <details class="pcat">
+          <summary class="prow">
+            <span class="thumb"></span>
+            <div><span class="pname"><i class="caret"></i>Общий каталог</span><div class="muted" style="font-size:12px">все {live.length} товаров, фильтр по разделам</div></div>
+            <a class="purl" href={u('/catalog')} target="_blank" onclick="event.stopPropagation()">{site('/catalog')}</a>
+            <span class="pkind">Каталог</span>
+          </summary>
+          {live.map((p) => (
+            <div class="prow lvl1">
+              <img class="thumb" src={thumb(p)} alt="" loading="lazy" />
+              <div><span class="pname">{p.title}</span><div class="muted" style="font-size:12px">{rub(p.price)}</div></div>
+              <a class="purl" href={u(p.path)} target="_blank">{p.path}</a>
+              <span class="pkind">Карточка товара</span>
+            </div>
+          ))}
+        </details>
+        {CATALOGS.map((c) => {
+          const list = inCatalog(c.part);
+          return (
+            <details class="pcat">
+              <summary class="prow">
+                {list[0] ? <img class="thumb" src={thumb(list[0])} alt="" loading="lazy" /> : <span class="thumb"></span>}
+                <div><span class="pname"><i class="caret"></i>Каталог «{c.title}»</span><div class="muted" style="font-size:12px">{list.length} товаров</div></div>
+                <a class="purl" href={u(`/catalog/${c.slug}`)} target="_blank" onclick="event.stopPropagation()">{site(`/catalog/${c.slug}`)}</a>
+                <span class="pkind">Каталог</span>
+              </summary>
+              {list.map((p) => (
+                <div class="prow lvl1">
+                  <img class="thumb" src={thumb(p)} alt="" loading="lazy" />
+                  <div><span class="pname">{p.title}</span><div class="muted" style="font-size:12px">{rub(p.price)}</div></div>
+                  <a class="purl" href={u(p.path)} target="_blank">{p.path}</a>
+                  <span class="pkind">Карточка товара</span>
+                </div>
+              ))}
+            </details>
+          );
+        })}
+      </div>
+    </section>
+
+    {[
+      { key: 'inner', title: 'Внутренние страницы', kind: 'Страница', list: inner },
+      { key: 'legal', title: 'Юридические страницы', kind: 'Юридическая', list: legal },
+      { key: 'tech', title: 'Технические страницы', kind: 'Техническая', list: tech },
+    ].map((g) => (
+      <section class="pgsec" data-g={g.key}>
+        <button type="button" class="pgroup"><i class="caret"></i>{g.title} <span>{g.list.length}</span></button>
+        <div class="pgbody">
+          {g.list.map((t) => (
+            <div class="prow"><span class="thumb"></span><span class="pname">{t.name}</span><a class="purl" href={u(t.path)} target="_blank">{site(t.path)}</a><span class="pkind">{g.kind}</span></div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  <style is:global>
+    .pgsec>.pgroup{display:flex;align-items:center;gap:6px;width:100%;border:0;border-top:1px solid #eceeed;text-align:left;cursor:pointer;font-family:inherit}
+    .pgsec>.pgroup .caret{transform:rotate(90deg)}
+    .pgsec.is-closed>.pgroup .caret{transform:none}
+    .pgsec.is-closed>.pgbody{display:none}
+  </style>
+  <script is:inline>
+    // Свернуть/развернуть группу; свёрнутые запоминаются (localStorage) и остаются свёрнутыми после перезагрузки
+    (function () {
+      var K = 'tbp_admin_closed', closed = [];
+      try { closed = JSON.parse(localStorage.getItem(K) || '[]'); } catch (e) {}
+      document.querySelectorAll('.pgsec').forEach(function (s) {
+        if (closed.indexOf(s.dataset.g) >= 0) s.classList.add('is-closed');
+        s.querySelector('.pgroup').addEventListener('click', function () {
+          s.classList.toggle('is-closed');
+          var all = [].slice.call(document.querySelectorAll('.pgsec.is-closed')).map(function (x) { return x.dataset.g; });
+          try { localStorage.setItem(K, JSON.stringify(all)); } catch (e) {}
+        });
+      });
+    })();
+  </script>
+</Admin>
