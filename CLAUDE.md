@@ -11,6 +11,9 @@
   картинки – webp в `public/img/p`. Адрес товара строится там же: `/catalog/<раздел>/<товар-из-названия>`.
 - Разделы-страницы и их старые адреса – `src/data/sections.json` (читают и сборщик данных, и сайт).
 - Показ: GitHub Pages `tema-mail/tsvetibezpovoda`, workflow `.github/workflows/pages.yml`, закрыт noindex.
+- Админка `/admin/` (стадия 1: «Страницы сайта» списком и «Заявки» с примером) – перенос кабинета Milovini; весь кабинет
+  шифруется `scripts/lock-admin.mjs` после сборки (секреты Actions ADMIN_LOGIN/ADMIN_PASS, локально – ~/.config/tsvetibezpovoda).
+  Других вкладок стандарта и карточек страниц на стадии 1 нет.
 
 ## Соглашения
 - Контакты, условия доставки, оплата, обещания – только с донора (`src/lib/site.ts`, `src/lib/delivery.ts`). Не выдумывать.
