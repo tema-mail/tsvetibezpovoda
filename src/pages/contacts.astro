@@ -12,7 +12,7 @@ const ld = {
   openingHours: 'Mo-Su 10:00-22:00', url: new URL(import.meta.env.BASE_URL, Astro.site).href,
 };
 ---
-<Base title={`Контакты – ${SITE.name}, ${SITE.city}, ${SITE.address}`} description={`${SITE.name}: ${SITE.city}, ${SITE.address}. Телефон ${SITE.phone}, ${SITE.hours.toLowerCase()}. ВКонтакте, Telegram, WhatsApp.`}>
+<Base title={`Контакты – ${SITE.name}, ${SITE.city}, ${SITE.address}`} description={`${SITE.name}: ${SITE.city}, ${SITE.address}. Телефон ${SITE.phone}, ${SITE.hours.toLowerCase()}. ВКонтакте, Telegram.`}>
   <PageHero
     crumbs={[{ label: 'Главная', href: '/' }, { label: 'Контакты' }]}
     title="Контакты «Цветы без повода»"

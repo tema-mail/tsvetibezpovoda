@@ -17,7 +17,6 @@ export const SITE = {
 export const SOCIALS = [
   { id: 'vk', label: 'ВКонтакте', href: 'https://vk.me/bouquet046' },
   { id: 'tg', label: 'Telegram', href: 'https://t.me/bouquet046' },
-  { id: 'wa', label: 'WhatsApp', href: 'https://wa.me/79065745745' },
 ] as const;
 
 /** Бегущая строка над шапкой – обещания донора дословно (про бонусы на стадии 1 не пишем). */
